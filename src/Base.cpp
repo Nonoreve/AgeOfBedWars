@@ -3,3 +3,5 @@
 //
 
 #include "Base.hpp"
+
+Base::Base(int health) : health(health) {}

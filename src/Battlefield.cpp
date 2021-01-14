@@ -36,18 +36,18 @@ Battlefield::Battlefield(const string &filename) {
         std::cout << "Pos line : " << line << std::endl;
         int x, y;
         bool posOver = false;
-        char comma = '\0';
         while (!posOver && iss >> x >> y) {
             std::cout << "New position : x=" << x << " y=" << y << std::endl;
-            positions.emplace_back(x, y);
+            basesPositions.emplace_back(x, y);
+            char comma = '\0';
             iss >> comma; // trying to read a comma
-            posOver = comma != '\0'; // if nothing is read we reached the end of the line
+            posOver = comma == '\0'; // if nothing is read we reached the end of the line
             if (comma != ',' && !posOver) {
                 std::cerr << "Error reading file : Positions should be separated by a comma ( , )." << std::endl;
                 std::exit(-1);
             }
         }
-        std::cout << "Finished reading positions for " << positions.size() << std::endl;
+        std::cout << "Finished reading " << basesPositions.size() << " basesPositions." << std::endl;
 
         while (!istrm.eof()) {
             getline(istrm, line);
@@ -59,13 +59,39 @@ Battlefield::Battlefield(const string &filename) {
                       << std::endl;
             std::exit(-1);
         }
-        std::cout << "Read background : " << std::endl;
+
+        std::for_each(basesPositions.begin(), basesPositions.end(), [&](auto e) {
+            int x, y;
+            std::tie(x, y) = e;
+            if (x < 0 || x > background[0].size() || y < 0 || y > background.size()) {
+                std::cerr << "Position out of terrain : " << x << ", " << y << std::endl;
+                std::exit(-1);
+            }
+        });
+
+        std::cout << "Read background : length=" << background[0].size() << " size=" << background.size() << std::endl;
         printBackground();
-        std::tie(x, y) = positions[0];
-        std::cout << "First base : " << background[y][x];
     }
+};
+
+int Battlefield::baseIndex = 0;
+
+Base &Battlefield::createBase(int health) {
+    bases.emplace_back(health);
+    baseIndex++;
+    return bases[baseIndex - 1];
 }
 
 void Battlefield::printBackground() {
     std::for_each(background.begin(), background.end(), [](const string &l) { std::cout << l; });
+}
+
+char Battlefield::terrainAt(std::pair<int, int> pos) {
+    int x, y;
+    std::tie(x, y) = pos;
+    return terrainAt(x, y);
+}
+
+char Battlefield::terrainAt(int posX, int posY) {
+    return background[posY][posX];
 }

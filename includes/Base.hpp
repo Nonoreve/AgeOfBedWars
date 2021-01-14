@@ -7,7 +7,10 @@
 
 
 class Base {
-
+private:
+int health;
+public:
+    Base(int health);
 };
 
 
