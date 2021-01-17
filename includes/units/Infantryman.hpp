@@ -5,8 +5,15 @@
 #ifndef AGEOFBEDWARS_INFANTRYMAN_HPP
 #define AGEOFBEDWARS_INFANTRYMAN_HPP
 
+#include "Unit.hpp"
 
-class Infantryman {
+class Infantryman : public Unit {
+private:
+    bool dalekMode;
+
+public:
+    Infantryman(Position position, Base target);
+    void upgrade();
 
 };
 

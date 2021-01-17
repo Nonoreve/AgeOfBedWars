@@ -3,3 +3,5 @@
 //
 
 #include "units/Archer.hpp"
+
+Archer::Archer(Position position, Base target) : Unit(12, 8, 3, position, target) {}

@@ -6,16 +6,19 @@
 #define AGEOFBEDWARS_PLAYER_HPP
 
 #include "Base.hpp"
+#include "units/Unit.hpp"
 
 #include <string>
+#include <vector>
 
-using std::string;
+using std::string, std::vector;
 
 class Player {
 private:
     string name;
     int money;
     Base base;
+    vector <Unit> units;
 
 public:
     Player(string name, int initialMoneyAmount, Base base);

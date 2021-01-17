@@ -5,8 +5,11 @@
 #ifndef AGEOFBEDWARS_ARCHER_HPP
 #define AGEOFBEDWARS_ARCHER_HPP
 
+#include "Unit.hpp"
 
-class Archer {
+class Archer : public Unit {
+public:
+    Archer(Position position, Base target);
 
 };
 

@@ -12,10 +12,27 @@
 
 using std::string, std::vector;
 
+/**
+ * Hold a 2D point in cell coordinates
+ */
+struct Position {
+    int x;
+    int y;
+
+    /**
+     *
+     * @param x
+     * @param y default to 0 for 1 dimensional games
+     */
+    explicit Position(int x, int y = 0) : x(x), y(y) {};
+
+};
+
 class Battlefield {
 private:
     vector<string> background;
-    // not a member of Base because its relative to the background itself and not used in Base
+    // Not a member of Base because its relative to the background itself and not used in Base.
+    // Position is in grid coordinates.
     vector<std::pair<int, int>> basesPositions;
     vector<Base> bases;
     static int baseIndex;
@@ -36,9 +53,8 @@ public:
      * @param health
      * @return
      */
-    Base& createBase(int health);
+    Base &createBase(int health);
 
 };
-
 
 #endif //AGEOFBEDWARS_BATTLEFIELD_HPP

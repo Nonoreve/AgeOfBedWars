@@ -6,7 +6,11 @@
 #define AGEOFBEDWARS_CATAPULT_HPP
 
 
-class Catapult {
+#include "Unit.hpp"
+
+class Catapult : public Unit {
+public:
+    Catapult(Position position, Base target);
 
 };
 

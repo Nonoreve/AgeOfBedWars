@@ -3,3 +3,5 @@
 //
 
 #include "units/Catapult.hpp"
+
+Catapult::Catapult(Position position, Base target) : Unit(20, 12, 6, position, target) {}
