@@ -6,11 +6,24 @@
 #define AGEOFBEDWARS_BASE_HPP
 
 
+#include "Battlefield.hpp"
+
 class Base {
 private:
-int health;
+    int health;
+    // position in cell coordinates
+    Position position;
+
 public:
-    Base(int health);
+    explicit Base(int health, Position position);
+
+    /**
+     * Check for cell occupation
+     * @return
+     */
+    bool canSummon();
+
+    const Position &getPosition() const;
 };
 
 

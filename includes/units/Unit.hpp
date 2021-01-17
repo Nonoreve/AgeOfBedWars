@@ -23,6 +23,8 @@ public:
 
     virtual void move() = 0;
 
+    virtual bool canAfford(int money) = 0;
+
 };
 
 

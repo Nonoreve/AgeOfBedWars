@@ -95,3 +95,12 @@ char Battlefield::terrainAt(std::pair<int, int> pos) {
 char Battlefield::terrainAt(int posX, int posY) {
     return background[posY][posX];
 }
+
+int Battlefield::basesStatus() {
+    // TODO
+    return -1;
+}
+
+Base Battlefield::getBase(int index) {
+    return bases.at(index);
+}

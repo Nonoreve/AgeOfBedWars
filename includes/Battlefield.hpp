@@ -31,22 +31,24 @@ struct Position {
 class Battlefield {
 private:
     vector<string> background;
-    // Not a member of Base because its relative to the background itself and not used in Base.
-    // Position is in grid coordinates.
+    // Not a member of Base because its relative to the background itself.
+    // Position is in background coordinates.
     vector<std::pair<int, int>> basesPositions;
     vector<Base> bases;
     static int baseIndex;
 
     void printBackground();
 
+    // background coordinates
     char terrainAt(std::pair<int, int> pos);
 
+    // background coordinates
     char terrainAt(int posX, int posY);
 
 public:
     explicit Battlefield(const string &filename);
 
-    inline int loadedBasePositions() { return basesPositions.size(); };
+    inline int loadedBases() { return basesPositions.size(); };
 
     /**
      * The bases are created an attached in the order of the loadedBases
@@ -54,6 +56,19 @@ public:
      * @return
      */
     Base &createBase(int health);
+
+    /**
+     *
+     * @return The index of the first destroyed base found or -1.
+     */
+    int basesStatus();
+
+    /**
+     *
+     * @param index
+     * @return
+     */
+    Base getBase(int index);
 
 };
 
