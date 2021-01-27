@@ -4,13 +4,12 @@
 
 #include "Base.hpp"
 
-Base::Base(int health, Position position) : health(health), position(position) {}
-
-bool Base::canSummon() {
-    // TODO
-    return false;
-}
+Base::Base(int health, Position position) : _health(health), _position(position) {}
 
 const Position &Base::getPosition() const {
-    return position;
+    return _position;
+}
+
+void Base::takeDamage(int damages) {
+	_health -= damages;
 }
