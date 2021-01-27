@@ -5,7 +5,8 @@
 #ifndef AGEOFBEDWARS_UNIT_HPP
 #define AGEOFBEDWARS_UNIT_HPP
 
-#include "Battlefield.hpp" // TODO try remove
+#include "Position.hpp"
+#include "Base.hpp"
 
 enum ActionType {
 	MOVE, ATTACK, IDLE
@@ -14,12 +15,13 @@ enum ActionType {
 class Unit {
 private:
 	int _health;
-	int _strikePower;
-	Position _position;
-	Base _target;
 
 protected:
 	Unit(int health, int strikePower, Position position, Base target);
+
+	Base _target;
+	Position _position;
+	int _strikePower;
 
 public:
 	virtual ActionType getAction(int actionPhase) = 0;
