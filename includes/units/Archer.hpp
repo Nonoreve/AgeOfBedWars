@@ -9,8 +9,11 @@
 
 class Archer : public Unit {
 public:
-    Archer(Position position, Base target);
+	Archer(Position position, Base target);
 
+	ActionType getAction(int actionPhase) override;
+
+	std::pair<Position, int> attack() override;
 };
 
 

@@ -9,11 +9,16 @@
 
 class Infantryman : public Unit {
 private:
-    bool dalekMode;
+	bool _dalekMode;
 
 public:
-    Infantryman(Position position, Base target);
-    void upgrade();
+	Infantryman(Position position, Base target);
+
+	void upgrade();
+
+	ActionType getAction(int actionPhase) override;
+
+	std::pair<Position, int> attack() override;
 
 };
 

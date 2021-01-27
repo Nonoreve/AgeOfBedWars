@@ -5,25 +5,36 @@
 #ifndef AGEOFBEDWARS_UNIT_HPP
 #define AGEOFBEDWARS_UNIT_HPP
 
-#include "Battlefield.hpp"
+#include "Battlefield.hpp" // TODO try remove
+
+enum ActionType {
+	MOVE, ATTACK, IDLE
+};
 
 class Unit {
 private:
-    int price;
-    int health;
-    int strikePower;
-    Position position;
-    Base target;
+	int _health;
+	int _strikePower;
+	Position _position;
+	Base _target;
 
 protected:
-    Unit(int price, int health, int strikePower, Position position, Base target);
+	Unit(int health, int strikePower, Position position, Base target);
 
 public:
-    virtual void attack() = 0;
+	virtual ActionType getAction(int actionPhase) = 0;
 
-    virtual void move() = 0;
+	virtual std::pair<Position, int> attack() = 0;
 
-    virtual bool canAfford(int money) = 0;
+	virtual void move();
+
+	virtual void takeDamages(int damages);
+
+	virtual bool stillAlive() const;
+
+	inline virtual const Position &getPosition() const {
+		return _position;
+	}
 
 };
 
