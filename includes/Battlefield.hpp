@@ -12,63 +12,60 @@
 
 using std::string, std::vector;
 
-/**
- * Hold a 2D point in cell coordinates
- */
-struct Position {
-    int x;
-    int y;
-
-    /**
-     *
-     * @param x
-     * @param y default to 0 for 1 dimensional games
-     */
-    explicit Position(int x, int y = 0) : x(x), y(y) {};
-
-};
-
 class Battlefield {
 private:
-    vector<string> background;
-    // Not a member of Base because its relative to the background itself.
-    // Position is in background coordinates.
-    vector<std::pair<int, int>> basesPositions;
-    vector<Base> bases;
-    static int baseIndex;
+	vector<vector<char>> _background; // not a vector<string> because we want to safely modify it
+	// tell how many cell there is between two bases
+	std::pair<int, int> _cellsGrid;
+	vector<Base> _bases;
+	static int _baseIndex;
 
-    void printBackground();
+	static void printBackground(vector<vector<char>> &terrain);
 
-    // background coordinates
-    char terrainAt(std::pair<int, int> pos);
+	// background coordinates
+	static void editTerrainAt(vector<vector<char>> &terrain, std::pair<int, int> pos, char tileToPut);
 
-    // background coordinates
-    char terrainAt(int posX, int posY);
+	// background coordinates
+	static void editTerrainAt(vector<vector<char>> &terrain, int posX, int posY, char tileToPut);
 
 public:
-    explicit Battlefield(const string &filename);
+	Battlefield(const string &filename, int baseHealth);
 
-    inline int loadedBases() { return basesPositions.size(); };
+	inline int loadedBases() {
+		return _bases.size();
+	};
 
-    /**
-     * The bases are created an attached in the order of the loadedBases
-     * @param health
-     * @return
-     */
-    Base &createBase(int health);
+	/**
+	 * The bases are created and attached in the order of the Positions in the file.
+	 * @return
+	 */
+	inline Base &getBaseInCreatedOrder() {
+		return _bases.at(++_baseIndex); // TODO check incrementation applies after object retrieval
+	}
 
-    /**
-     *
-     * @return The index of the first destroyed base found or -1.
-     */
-    int basesStatus();
+	/**
+	 *
+	 * @return The index of the first destroyed base found or -1.
+	 */
+	int basesStatus(); // TODO move to Base
 
-    /**
-     *
-     * @param index
-     * @return
-     */
-    Base getBase(int index);
+	/**
+	 * Check if the cell at the given position has no Unit on it.
+	 * @param position
+	 * @return
+	 */
+	bool isCellFree(Position position) const;
+
+	void hitThere(Position position, int damages);
+
+	/**
+	 * Draw the background and all Units above
+	 */
+	void drawTerrain();
+
+	inline Base &getBase(int index) {
+		return _bases.at(index);
+	}
 
 };
 
