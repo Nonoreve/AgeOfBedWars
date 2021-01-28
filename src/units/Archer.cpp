@@ -2,6 +2,7 @@
 // Created by nonoreve on 1/5/21.
 //
 
+#include <iostream>
 #include "units/Archer.hpp"
 
 Archer::Archer(Position position, Base target) : Unit(8, 3, position, target) {
@@ -16,7 +17,8 @@ ActionType Archer::getAction(int actionPhase) {
 		case 3:
 			return IDLE;
 		default:
-			return IDLE; // TODO throw error ?
+			std::cerr << "INVALID MOVE" << std::endl;
+			return IDLE;
 	}
 }
 

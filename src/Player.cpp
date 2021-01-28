@@ -20,7 +20,7 @@ string Player::report() const {
 }
 
 bool Player::canAfford(int price) {
-	return price < _money;
+	return price <= _money;
 }
 
 void Player::buy(UnitType unitType) {

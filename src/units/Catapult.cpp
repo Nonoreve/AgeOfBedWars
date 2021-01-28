@@ -2,6 +2,7 @@
 // Created by nonoreve on 1/5/21.
 //
 
+#include <iostream>
 #include "units/Catapult.hpp"
 
 Catapult::Catapult(Position position, Base target) : Unit(12, 6, position, target) {
@@ -16,7 +17,8 @@ ActionType Catapult::getAction(int actionPhase) {
 		case 3:
 			return MOVE;
 		default:
-			return IDLE; // TODO throw error ?
+			std::cerr << "INVALID MOVE" << std::endl;
+			return IDLE;
 	}
 }
 

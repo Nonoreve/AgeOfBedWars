@@ -9,6 +9,7 @@
 
 #include <iostream>
 #include <algorithm>
+#include <sstream>
 
 #define ARGUMENTS 3
 #define OPTIONALARGUMENTS 1
@@ -26,8 +27,24 @@ Base opponentBase(const std::vector<Player> &players, Iterator currentPlayer, Ba
 
 }
 
-UnitType parseUnitName(const string &) {
-	// TODO
+UnitType parseUnitName(string unitName) {
+	std::transform(unitName.begin(), unitName.end(), unitName.begin(), [](unsigned char c) { return std::tolower(c); });
+	if (unitName == "infantry")
+		return UnitType::INFANTRYMAN;
+	if (unitName == "archer")
+		return UnitType::ARCHER;
+	if (unitName == "catapult")
+		return UnitType::CATAPULT;
+	return UNKNOWN;
+}
+
+auto prices() {
+	std::ostringstream prices;
+	prices << "Available Units : " << std::endl;
+	prices << "\tInfantry : $" << Unit::UNIT_PRICES[0] << std::endl;
+	prices << "\tArcher : $" << Unit::UNIT_PRICES[1] << std::endl;
+	prices << "\tCatapult : $" << Unit::UNIT_PRICES[2] << std::endl;
+	return prices.str();
 }
 
 int main(int argc, char *argv[]) {
@@ -68,12 +85,13 @@ int main(int argc, char *argv[]) {
 	int round = 0;
 	int winner = -1;
 	while (winner == -1 && round < 100) {
+		std::cout << std::endl << "Round number " << round << std::endl;
 		// distributes money for all the players
 		std::for_each(players.begin(), players.end(), [&](Player &p) { p.pay(moneyPerTurn); });
 		auto currentPlayer = players.begin();
 		while (currentPlayer != players.end() && winner == -1) {
-			std::cout << "Turn of " << currentPlayer->getName() << " " << currentPlayer->report() << std::endl;
-
+			std::cout << "Turn of " << currentPlayer->getName() << "\n\t" << currentPlayer->report() << std::endl;
+			std::cout << prices() << std::endl;
 			// all 3 action phases
 			terrain.playActions();
 
@@ -86,14 +104,18 @@ int main(int argc, char *argv[]) {
 					             "(infantry|archer|catapult|none)" << std::endl;
 					std::cin >> unit;
 					UnitType unitType = parseUnitName(unit);
-					if (unitType != UNKNOWN && currentPlayer->canAfford(Unit::UNIT_PRICES[unitType])) {
-						if (unitPool.unitFactory(unitType, currentPlayer->getBase().getPosition(),
-						                         opponentBase(players, currentPlayer, terrain)) == nullptr) {
-							std::cout << "Unit summoning failed. You have " << currentPlayer->report() << " money left."
-							          << std::endl;
+					if (unitType != UNKNOWN) {
+						if (currentPlayer->canAfford(Unit::UNIT_PRICES[unitType])) {
+							if (unitPool.unitFactory(unitType, currentPlayer->getBase().getPosition(),
+							                         opponentBase(players, currentPlayer, terrain)) == nullptr) {
+								std::cout << "Unit summoning failed. You have " << std::endl;
+							} else {
+								currentPlayer->buy(unitType);
+								validForm = true;
+							}
 						} else {
-							currentPlayer->buy(unitType);
-							validForm = true;
+							std::cout << "Can't afford this unit. You have " << currentPlayer->report()
+							          << " money left." << std::endl;
 						}
 					} else if (unit == "none") {
 						std::cout << "No unit summoned." << std::endl;
@@ -102,6 +124,8 @@ int main(int argc, char *argv[]) {
 						std::cout << "Wrong unit name : " << unit << ". Try again." << std::endl;
 					}
 				}
+			} else {
+				std::cout << "You can't summon for now your base is occupied." << std::endl;
 			}
 			terrain.drawTerrain();
 			// check for a winner
@@ -110,6 +134,9 @@ int main(int argc, char *argv[]) {
 		}
 		round++;
 	}
-	std::cout << "The winner is " << players.at(winner).getName() << std::endl;
+	if (round < 100)
+		std::cout << "The winner is " << players.at(winner).getName() << std::endl;
+	else
+		std::cout << "Game Over" << std::endl;
 	return 0;
 }

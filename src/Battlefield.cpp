@@ -88,11 +88,34 @@ int Battlefield::basesStatus() {
 }
 
 void Battlefield::playActions() {
-
+	std::vector<Position> allPos = _unitPool.getAllPositions();
+	// phase 1
+	for (int i = allPos.size() - 1; i >= 0; i--) {
+		doActionPhase(1, _unitPool.getUnit(allPos.at(i)));
+	}
+	// phase 2
+	for (int i = 0; i < allPos.size(); i++) {
+		doActionPhase(2, _unitPool.getUnit(allPos.at(i)));
+	}
+	// phase 3
+	for (int i = 0; i < allPos.size(); i++) {
+		doActionPhase(3, _unitPool.getUnit(allPos.at(i)));
+	}
 }
 
-void Battlefield::doActionPhase(int actionPhase, int index) {
-
+void Battlefield::doActionPhase(int actionPhase, Unit *unit) {
+	switch (unit->getAction(actionPhase)) {
+		case MOVE:
+			_unitPool.move(unit, unit->move());
+			break;
+		case ATTACK: {
+			std::pair result = unit->attack();
+			hitThere(result.first, result.second);
+		}
+			break;
+		case IDLE: // do nothing
+			break;
+	}
 }
 
 void Battlefield::hitThere(Position position, int damages) {
@@ -109,7 +132,7 @@ void Battlefield::drawTerrain() {
 	vector<vector<char>> frame = _background;
 	float charPerCellX = (float) frame[0].size() / (float) _cellsGrid.first;
 	float charPerCellY = (float) frame.size() / (float) _cellsGrid.second;
-	for (auto &pos : _unitPool.getAllPositions()) { // TODO UnitPool::getAllPositions ?
+	for (auto &pos : _unitPool.getAllPositions()) {
 		editTerrainAt(frame, (int) std::round(charPerCellX * (float) pos.x),
 		              (int) std::round(charPerCellY * (float) pos.y), 'X');
 	}

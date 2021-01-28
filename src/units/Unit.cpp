@@ -9,7 +9,7 @@ Unit::Unit(int health, int strikePower, Position position, Base target) : _healt
 
 }
 
-void Unit::move() {
+Position& Unit::move() {
 	int x2 = _target.getPosition().x;
 	int y2 = _target.getPosition().y;
 	int w = x2 - _position.x;
@@ -36,6 +36,7 @@ void Unit::move() {
 		_position.x += dx2;
 		_position.y += dy2;
 	}
+	return _position;
 }
 
 void Unit::takeDamages(int damages) {

@@ -21,7 +21,7 @@ private:
 	vector<Base> _bases;
 	UnitPool &_unitPool;
 
-	void doActionPhase(int actionPhase, int index);
+	void doActionPhase(int actionPhase, Unit *unit);
 
 	static int _baseIndex;
 

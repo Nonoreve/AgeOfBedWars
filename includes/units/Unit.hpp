@@ -34,7 +34,7 @@ public:
 
 	virtual std::pair<Position, int> attack() = 0;
 
-	virtual void move();
+	virtual Position& move();
 
 	virtual void takeDamages(int damages);
 
