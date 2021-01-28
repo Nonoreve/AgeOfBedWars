@@ -27,7 +27,7 @@ struct Position {
      * @return distance between current and target positions.
      * Result is negative when target is closer to the origin
      */
-    float distance(Position target) {
+    float distance(Position target) const {
         return std::hypot(target.x - x, target.y - y);
     }
 

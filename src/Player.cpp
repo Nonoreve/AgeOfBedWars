@@ -6,42 +6,14 @@
 
 #include <utility>
 
-Player::Player(string name, int initialMoneyAmount, Base base) : name(std::move(name)),
-                                                                 money(initialMoneyAmount),
-                                                                 base(base) {}
-
-void Player::play() {
-
-}
-
-const string &Player::getName() const {
-    return name;
+Player::Player(string name, int initialMoneyAmount, Base base) : _name(std::move(name)), _money(initialMoneyAmount),
+                                                                 _base(std::move(base)) {
 }
 
 void Player::pay(int pay) {
-    money += pay;
+	_money += pay;
 }
 
-bool Player::summon(string unitType, Base target) {
-    if (unitType == "infantry") {
-        Infantryman(base.getPosition());
-        return true;
-    } else if(unitType == "archer"){
-
-    } else if(unitType == "catapult"){
-
-    }
-    return false;
-}
-
-string Player::report() {
-    return name + " : \nMoney : " + std::to_string(money);
-}
-
-bool Player::canSummon() {
-    return base.canSummon();
-}
-
-int Player::getMoney() const {
-    return money;
+string Player::report() const {
+	return _name + " : \nMoney : " + std::to_string(_money);
 }

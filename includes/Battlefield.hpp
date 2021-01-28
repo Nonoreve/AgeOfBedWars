@@ -9,27 +9,29 @@
 
 #include <string>
 #include <vector>
+#include <units/UnitPool.hpp>
 
 using std::string, std::vector;
 
 class Battlefield {
 private:
 	vector<vector<char>> _background; // not a vector<string> because we want to safely modify it
-	// tell how many cell there is between two bases
+	// tell how many cells there are between two bases
 	std::pair<int, int> _cellsGrid;
 	vector<Base> _bases;
+	UnitPool &_unitPool;
+
+	void doActionPhase(int actionPhase, int index);
+
 	static int _baseIndex;
 
 	static void printBackground(vector<vector<char>> &terrain);
 
 	// background coordinates
-	static void editTerrainAt(vector<vector<char>> &terrain, std::pair<int, int> pos, char tileToPut);
-
-	// background coordinates
 	static void editTerrainAt(vector<vector<char>> &terrain, int posX, int posY, char tileToPut);
 
 public:
-	Battlefield(const string &filename, int baseHealth);
+	Battlefield(UnitPool &unitPool, const string &filename, int baseHealth);
 
 	inline int loadedBases() {
 		return _bases.size();
@@ -40,7 +42,7 @@ public:
 	 * @return
 	 */
 	inline Base &getBaseInCreatedOrder() {
-		return _bases.at(++_baseIndex); // TODO check incrementation applies after object retrieval
+		return _bases.at(_baseIndex++);
 	}
 
 	/**
@@ -50,11 +52,9 @@ public:
 	int basesStatus(); // TODO move to Base
 
 	/**
-	 * Check if the cell at the given position has no Unit on it.
-	 * @param position
-	 * @return
+	 * Process the right action for all the units.
 	 */
-	bool isCellFree(Position position) const;
+	void playActions();
 
 	void hitThere(Position position, int damages);
 

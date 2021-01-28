@@ -16,7 +16,7 @@
  * (second line) comma separated list of 2D coordinates
  * (third and more lines) caracter representation of the background of the battlefield
  */
-Battlefield::Battlefield(const string &filename, int baseHealth) {
+Battlefield::Battlefield(UnitPool &unitPool, const string &filename, int baseHealth) : _unitPool(unitPool) {
 	std::ifstream istrm(filename, std::ios::binary);
 	if (!istrm.is_open()) {
 		std::cerr << "Failed to open " << filename << std::endl;
@@ -69,19 +69,47 @@ Battlefield::Battlefield(const string &filename, int baseHealth) {
 			std::exit(-1);
 		}
 
-		std::cout << "Read background : length=" << _background[0].size() << " size=" << _background.size() << std::endl;
+		std::cout << "Read background : length=" << _background[0].size() << " size=" << _background.size()
+		          << std::endl;
 		printBackground(_background);
 	}
 };
 
 int Battlefield::_baseIndex = 0;
 
+int Battlefield::basesStatus() {
+	bool destroyedBaseFound = false;
+	auto currentBase = _bases.begin();
+	while (currentBase != _bases.end() && !destroyedBaseFound) {
+		destroyedBaseFound = currentBase->getHealth() <= 0;
+		++currentBase;
+	}
+	return destroyedBaseFound ? (int) std::distance(_bases.begin(), currentBase) : -1;
+}
+
+void Battlefield::playActions() {
+
+}
+
+void Battlefield::doActionPhase(int actionPhase, int index) {
+
+}
+
+void Battlefield::hitThere(Position position, int damages) {
+	if (!_unitPool.isCellFree(position)) { // TODO player reward
+		_unitPool.getUnit(position)->takeDamages(damages);
+		if (!_unitPool.getUnit(position)->stillAlive()) {
+			_unitPool.remove(position);
+		}
+	}
+}
+
 void Battlefield::drawTerrain() {
 	std::cout << "Current state of terrain : " << std::endl;
 	vector<vector<char>> frame = _background;
 	float charPerCellX = (float) frame[0].size() / (float) _cellsGrid.first;
 	float charPerCellY = (float) frame.size() / (float) _cellsGrid.second;
-	for (auto &unit : _units) { // TODO fix
+	for (auto &unit : _units) { // TODO UnitPool::getAllPositions ?
 		Position position = unit->getPosition();
 		editTerrainAt(frame, (int) std::round(charPerCellX * (float) position.x),
 		              (int) std::round(charPerCellY * (float) position.y), 'X');
@@ -95,38 +123,6 @@ void Battlefield::printBackground(vector<vector<char>> &terrain) {
 	});
 }
 
-void Battlefield::editTerrainAt(vector<vector<char>> &terrain, std::pair<int, int> pos, char tileToPut) {
-	int x, y;
-	std::tie(x, y) = pos;
-	editTerrainAt(terrain, x, y, tileToPut);
-}
-
 void Battlefield::editTerrainAt(vector<vector<char>> &terrain, int posX, int posY, char tileToPut) {
 	terrain[posY][posX] = tileToPut;
-}
-
-int Battlefield::basesStatus() {
-	bool destroyedBaseFound = false;
-	auto currentBase = _bases.begin();
-	while (currentBase != _bases.end() && !destroyedBaseFound) {
-		destroyedBaseFound = currentBase->getHealth() <= 0;
-		++currentBase;
-	}
-	return destroyedBaseFound ? (int) std::distance(_bases.begin(), currentBase) : -1;
-}
-
-// TODO fix (or remove ?)
-void Battlefield::hitThere(Position position, int damages) {
-	auto currentUnit = this->units.begin();
-	bool cellFound = false;
-	while (currentUnit != units.end() && !cellFound) {
-		cellFound = (*currentUnit)->getPosition() == position;
-		++currentUnit;
-	}
-	if (cellFound) {
-		(*currentUnit)->takeDamages(damages);
-		if (!(*currentUnit)->stillAlive()) {
-			units.erase(currentUnit);
-		}
-	}
 }
