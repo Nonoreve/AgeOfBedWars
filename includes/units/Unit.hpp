@@ -37,7 +37,7 @@ public:
 	inline virtual const Position &getPosition() const {
 		return _position;
 	}
-
+	// TODO static unit prices
 };
 
 

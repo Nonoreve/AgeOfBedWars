@@ -15,12 +15,12 @@ using std::string, std::vector;
 
 class Player {
 private:
-    string name;
+	string _name;
+    int _money;
+    Base _base;
+    vector<Unit> _units; // TODO UnitPool
 
-private:
-    int money;
-    Base base;
-    vector<Unit> units;
+	void doActionPhase(int actionPhase, int index);
 
 public:
     Player(string name, int initialMoneyAmount, Base base);
@@ -41,12 +41,12 @@ public:
      * @param money
      */
     void pay(int money);
-
-    /**
-     * Only check for cell occupation
-     * @return
-     */
-    bool canSummon();
+// TODO all 3 below belongs to unit system
+	/**
+	 * Only check for cell occupation
+	 * @return
+	 */
+	bool canSummon();
 
     /**
      *
@@ -55,6 +55,11 @@ public:
      * @return false if the summing failed. (not enough money or cell occupied)
      */
     bool summon(string unitType, Base target);
+
+	/**
+	 * Check life of all its units and remove those that are dead.
+	 */
+	void buryCorpses();
 
     const string &getName() const;
 
