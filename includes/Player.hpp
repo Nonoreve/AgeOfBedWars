@@ -35,13 +35,16 @@ public:
 	 */
 	void pay(int money);
 
+	bool canAfford(int price);
+
+	void buy(UnitType unitType);
+
 	inline const string &getName() const {
 		return _name;
 	}
 
-	// TODO remove if possible
-	inline int getMoney() const {
-		return _money;
+	const Base &getBase() const {
+		return _base;
 	}
 };
 

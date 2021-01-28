@@ -48,13 +48,6 @@ Battlefield::Battlefield(UnitPool &unitPool, const string &filename, int baseHea
 				std::exit(-1);
 			}
 		}
-		std::for_each(_bases.begin(), _bases.end(), [&](const Base &base) {
-			Position p = base.getPosition();
-			if (p.x < 0 || p.x > _background[0].size() || p.y < 0 || p.y > _background.size()) {
-				std::cerr << "Position out of terrain : " << p.x << ", " << p.y << std::endl;
-				std::exit(-1);
-			}
-		});
 
 		std::cout << "Finished reading " << _bases.size() << " bases Positions." << std::endl;
 		// TODO unit sprites
@@ -68,6 +61,13 @@ Battlefield::Battlefield(UnitPool &unitPool, const string &filename, int baseHea
 			          << std::endl;
 			std::exit(-1);
 		}
+		std::for_each(_bases.begin(), _bases.end(), [&](const Base &base) {
+			Position p = base.getPosition();
+			if (p.x < 0 || p.x > _background[0].size() || p.y < 0 || p.y > _background.size()) {
+				std::cerr << "Position out of terrain : " << p.x << ", " << p.y << std::endl;
+				std::exit(-1);
+			}
+		});
 
 		std::cout << "Read background : length=" << _background[0].size() << " size=" << _background.size()
 		          << std::endl;
@@ -109,10 +109,9 @@ void Battlefield::drawTerrain() {
 	vector<vector<char>> frame = _background;
 	float charPerCellX = (float) frame[0].size() / (float) _cellsGrid.first;
 	float charPerCellY = (float) frame.size() / (float) _cellsGrid.second;
-	for (auto &unit : _units) { // TODO UnitPool::getAllPositions ?
-		Position position = unit->getPosition();
-		editTerrainAt(frame, (int) std::round(charPerCellX * (float) position.x),
-		              (int) std::round(charPerCellY * (float) position.y), 'X');
+	for (auto &pos : _unitPool.getAllPositions()) { // TODO UnitPool::getAllPositions ?
+		editTerrainAt(frame, (int) std::round(charPerCellX * (float) pos.x),
+		              (int) std::round(charPerCellY * (float) pos.y), 'X');
 	}
 	printBackground(frame);
 }

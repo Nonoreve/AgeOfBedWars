@@ -7,20 +7,31 @@
 
 #include "Unit.hpp"
 
-#include <map>
 #include <memory>
+#include <vector>
+#include <unordered_map>
 
+namespace std {
+	template<>
+	struct hash<Position> { // from https://en.cppreference.com/w/cpp/utility/hash
+		std::size_t operator()(Position const &pos) const noexcept {
+			std::size_t h1 = std::hash<int>{}(pos.x);
+			std::size_t h2 = std::hash<int>{}(pos.y);
+			return h1 ^ (h2 << 1);
+		}
+	};
+}
 class UnitPool {
 private:
-	std::map<Position, std::unique_ptr<Unit>> _pool;
+	std::unordered_map<Position, std::unique_ptr<Unit>> _pool;
 
 public:
 	UnitPool() {
 	}
 
-	Unit *unitFactory(const std::string &unitType, Position position, Base target);
+	Unit *unitFactory(UnitType unitType, Position position, Base target);
 
-	void move(Unit* unit, Position destination);
+	void move(Unit *unit, Position destination);
 
 	void remove(Position position);
 
@@ -30,6 +41,8 @@ public:
 	 * @return
 	 */
 	bool isCellFree(Position position) const;
+
+	std::vector<Position> getAllPositions() const;
 
 	Unit *getUnit(Position position) const;
 };

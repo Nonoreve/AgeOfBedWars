@@ -5,15 +5,24 @@
 #include "units/UnitPool.hpp"
 
 #include "units/Infantryman.hpp"
+#include "units/Archer.hpp"
+#include "units/Catapult.hpp"
 
 #include <iostream>
 
-Unit *UnitPool::unitFactory(const std::string &unitType, Position position, Base target) {
+Unit *UnitPool::unitFactory(UnitType unitType, Position position, Base target) {
 	if (isCellFree(position)) {
-		if (unitType == "infantry") {
-			_pool.insert(std::make_pair(position, std::make_unique<Infantryman>(position, target)));
-			return _pool.at(position).get();
-		} // TODO other cases
+		switch (unitType) {
+			case INFANTRYMAN:
+				_pool.insert(std::make_pair(position, std::make_unique<Infantryman>(position, target)));
+				return _pool.at(position).get();
+			case ARCHER:
+				_pool.insert(std::make_pair(position, std::make_unique<Archer>(position, target)));
+				return _pool.at(position).get();
+			case CATAPULT:
+				_pool.insert(std::make_pair(position, std::make_unique<Catapult>(position, target)));
+				return _pool.at(position).get();
+		}
 	}
 	return nullptr;
 }
@@ -42,6 +51,13 @@ void UnitPool::remove(Position position) {
 
 bool UnitPool::isCellFree(Position position) const {
 	return _pool.count(position) == 0;
+}
+
+std::vector<Position> UnitPool::getAllPositions() const {
+	std::vector<Position> positions;
+	for(const auto & current : _pool)
+		positions.push_back(current.first);
+	return positions;
 }
 
 Unit *UnitPool::getUnit(Position position) const {

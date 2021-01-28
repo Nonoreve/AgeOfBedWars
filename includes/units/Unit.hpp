@@ -12,6 +12,12 @@ enum ActionType {
 	MOVE, ATTACK, IDLE
 };
 
+enum UnitType {
+	INFANTRYMAN, ARCHER, CATAPULT, UNKNOWN
+
+};
+
+
 class Unit {
 private:
 	int _health;
@@ -37,7 +43,8 @@ public:
 	inline virtual const Position &getPosition() const {
 		return _position;
 	}
-	// TODO static unit prices
+
+	constexpr static int UNIT_PRICES[] = {10, 12, 20};
 };
 
 
