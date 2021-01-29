@@ -40,7 +40,7 @@ public:
 
 	virtual bool stillAlive() const;
 
-	inline virtual const Position &getPosition() const {
+	inline virtual const Position getPosition() const {
 		return _position;
 	}
 

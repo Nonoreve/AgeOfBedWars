@@ -86,14 +86,14 @@ int main(int argc, char *argv[]) {
 	int winner = -1;
 	while (winner == -1 && round < 100) {
 		std::cout << std::endl << "Round number " << round << std::endl;
+		// all 3 action phases
+		terrain.playActions();
 		// distributes money for all the players
 		std::for_each(players.begin(), players.end(), [&](Player &p) { p.pay(moneyPerTurn); });
 		auto currentPlayer = players.begin();
 		while (currentPlayer != players.end() && winner == -1) {
 			std::cout << "Turn of " << currentPlayer->getName() << "\n\t" << currentPlayer->report() << std::endl;
 			std::cout << prices() << std::endl;
-			// all 3 action phases
-			terrain.playActions();
 
 			// summoning phase
 			if (unitPool.isCellFree(currentPlayer->getBase().getPosition())) {

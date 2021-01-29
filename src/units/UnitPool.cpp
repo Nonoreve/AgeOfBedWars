@@ -27,11 +27,11 @@ Unit *UnitPool::unitFactory(UnitType unitType, Position position, Base target) {
 	return nullptr;
 }
 
-void UnitPool::move(Unit *unit, Position destination) {
+void UnitPool::move(Position destination, Position origin) {
 	if (isCellFree(destination)) {
-		auto node = _pool.extract(unit->getPosition());
+		auto node = _pool.extract(origin);
 		if (node.empty()) {
-			std::cerr << "Given unit comes from nowhere" << std::endl;
+			std::cerr << "No unit at position (" << origin.x << ", " << origin.y << ")" << std::endl;
 			std::exit(-1);
 		} else { // https://en.cppreference.com/w/cpp/container/map/extract
 			node.key() = destination;
@@ -42,7 +42,7 @@ void UnitPool::move(Unit *unit, Position destination) {
 
 void UnitPool::remove(Position position) {
 	if (isCellFree(position)) {
-		std::cerr << "Given unit comes from nowhere" << std::endl;
+		std::cerr << "No unit at position (" << position.x << ", " << position.y << ")" << std::endl;
 		std::exit(-1);
 	} else {
 		_pool.erase(position);
@@ -55,11 +55,16 @@ bool UnitPool::isCellFree(Position position) const {
 
 std::vector<Position> UnitPool::getAllPositions() const {
 	std::vector<Position> positions;
-	for(const auto & current : _pool)
+	for (const auto &current : _pool)
 		positions.push_back(current.first);
 	return positions;
 }
 
 Unit *UnitPool::getUnit(Position position) const {
-	return _pool.at(position).get();
+	if (isCellFree(position)) {
+		std::cerr << "No unit at position (" << position.x << ", " << position.y << ")" << std::endl;
+		std::exit(-1);
+	} else {
+		return _pool.at(position).get();
+	}
 }

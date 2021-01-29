@@ -17,7 +17,7 @@ namespace std {
 		std::size_t operator()(Position const &pos) const noexcept {
 			std::size_t h1 = std::hash<int>{}(pos.x);
 			std::size_t h2 = std::hash<int>{}(pos.y);
-			return h1 ^ (h2 << 1);
+			return h1 + (h2 << 10); // TODO temporary fix
 		}
 	};
 }
@@ -31,7 +31,7 @@ public:
 
 	Unit *unitFactory(UnitType unitType, Position position, Base target);
 
-	void move(Unit *unit, Position destination);
+	void move(Position destination, Position origin);
 
 	void remove(Position position);
 

@@ -93,10 +93,12 @@ void Battlefield::playActions() {
 	for (int i = allPos.size() - 1; i >= 0; i--) {
 		doActionPhase(1, _unitPool.getUnit(allPos.at(i)));
 	}
+	allPos = _unitPool.getAllPositions();
 	// phase 2
 	for (int i = 0; i < allPos.size(); i++) {
 		doActionPhase(2, _unitPool.getUnit(allPos.at(i)));
 	}
+	allPos = _unitPool.getAllPositions();
 	// phase 3
 	for (int i = 0; i < allPos.size(); i++) {
 		doActionPhase(3, _unitPool.getUnit(allPos.at(i)));
@@ -106,7 +108,8 @@ void Battlefield::playActions() {
 void Battlefield::doActionPhase(int actionPhase, Unit *unit) {
 	switch (unit->getAction(actionPhase)) {
 		case MOVE:
-			_unitPool.move(unit, unit->move());
+			// destination is rightmost because we want to apply the move after getting its previous value
+			_unitPool.move(unit->move(), unit->getPosition());
 			break;
 		case ATTACK: {
 			std::pair result = unit->attack();
