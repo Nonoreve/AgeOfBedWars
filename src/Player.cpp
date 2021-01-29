@@ -19,15 +19,19 @@ string Player::report() const {
 	return "Money : " + std::to_string(_money);
 }
 
-bool Player::canAfford(int price) {
+bool Player::canAfford(int price) const {
 	return price <= _money;
 }
 
 void Player::buy(UnitType unitType) {
-	if (unitType != UNKNOWN && canAfford(Unit::UNIT_PRICES[unitType]))
-		_money -= Unit::UNIT_PRICES[unitType];
-	else{
+	if (unitType != UNKNOWN && canAfford(Player::UNIT_PRICES[unitType]))
+		_money -= Player::UNIT_PRICES[unitType];
+	else {
 		std::cerr << "Can't afford unit" << std::endl;
 		exit(-1);
 	}
+}
+
+bool Player::operator==(const Player &rhs) const {
+	return _name == rhs._name && _base == rhs._base;
 }

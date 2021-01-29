@@ -23,6 +23,8 @@ private:
 
 	void doActionPhase(int actionPhase, Unit *unit);
 
+	vector<Position> filter(vector<Position> allPos, Player &currentPlayer);
+
 	static int _baseIndex;
 
 	static void printBackground(vector<vector<char>> &terrain);
@@ -52,13 +54,15 @@ public:
 
 	/**
 	 * Process the right action for all the units.
+	 * @param currentPlayer the player who to moves its units
 	 */
-	void playActions();
-/**
- * Only target Units (not bases)
- * @param position
- * @param damages
- */
+	void playActions(Player &currentPlayer);
+
+	/**
+	 * Only target Units (not bases)
+	 * @param position
+	 * @param damages
+	 */
 	void hitThere(Position position, int damages);
 
 	/**

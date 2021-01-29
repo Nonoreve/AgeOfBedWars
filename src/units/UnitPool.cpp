@@ -10,17 +10,18 @@
 
 #include <iostream>
 
-Unit *UnitPool::unitFactory(UnitType unitType, Position position, Base target) {
+Unit *UnitPool::unitFactory(UnitType unitType, Player &player, Base &target) {
+	Position position = player.getBase().getPosition();
 	if (isCellFree(position)) {
 		switch (unitType) {
 			case INFANTRYMAN:
-				_pool.insert(std::make_pair(position, std::make_unique<Infantryman>(position, target)));
+				_pool.insert(std::make_pair(position, std::make_unique<Infantryman>(player, target)));
 				return _pool.at(position).get();
 			case ARCHER:
-				_pool.insert(std::make_pair(position, std::make_unique<Archer>(position, target)));
+				_pool.insert(std::make_pair(position, std::make_unique<Archer>(player, target)));
 				return _pool.at(position).get();
 			case CATAPULT:
-				_pool.insert(std::make_pair(position, std::make_unique<Catapult>(position, target)));
+				_pool.insert(std::make_pair(position, std::make_unique<Catapult>(player, target)));
 				return _pool.at(position).get();
 		}
 	}

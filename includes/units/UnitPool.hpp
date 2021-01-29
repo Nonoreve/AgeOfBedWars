@@ -6,6 +6,7 @@
 #define AGEOFBEDWARS_UNITPOOL_HPP
 
 #include "Unit.hpp"
+#include "Player.hpp"
 
 #include <memory>
 #include <vector>
@@ -28,10 +29,9 @@ private:
 	std::unordered_map<Position, std::unique_ptr<Unit>> _pool;
 
 public:
-	UnitPool() {
-	}
+	UnitPool() = default;
 
-	Unit *unitFactory(UnitType unitType, Position position, Base target);
+	Unit *unitFactory(UnitType unitType, Player &player, Base &target);
 
 	void move(Position destination, Position origin);
 

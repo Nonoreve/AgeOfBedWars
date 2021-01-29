@@ -4,8 +4,9 @@
 
 #include "units/Unit.hpp"
 
-Unit::Unit(int health, int strikePower, Position position, Base target) : _health(health), _strikePower(strikePower),
-                                                                          _position(position), _target(target) {
+Unit::Unit(int health, int strikePower, Player &owner, Base &target) : _health(health), _strikePower(strikePower),
+                                                                       _position(owner.getBase().getPosition()),
+                                                                       _target(target), _owner(owner) {
 
 }
 
@@ -49,4 +50,8 @@ bool Unit::stillAlive() const {
 
 bool Unit::targetReached() {
 	return _position == _target.getPosition();
+}
+
+bool Unit::belongsTo(Player &player) const {
+	return _owner == player;
 }

@@ -5,29 +5,22 @@
 #ifndef AGEOFBEDWARS_UNIT_HPP
 #define AGEOFBEDWARS_UNIT_HPP
 
+#include "UnitType.hpp"
+#include "Player.hpp"
 #include "Position.hpp"
 #include "Base.hpp"
-
-enum ActionType {
-	MOVE, ATTACK, IDLE
-};
-
-enum UnitType {
-	INFANTRYMAN, ARCHER, CATAPULT, UNKNOWN
-
-};
-
 
 class Unit {
 private:
 	int _health;
+	Player _owner;
 
 protected:
-	Unit(int health, int strikePower, Position position, Base target);
-
 	Base _target;
 	Position _position;
 	int _strikePower;
+
+	Unit(int health, int strikePower, Player &player, Base &target);
 
 public:
 	virtual ActionType getAction(int actionPhase) = 0;
@@ -42,15 +35,15 @@ public:
 
 	virtual bool targetReached();
 
-	inline virtual Position getPosition() const {
+	virtual bool belongsTo(Player &player) const;
+
+	inline Position getPosition() const {
 		return _position;
 	}
 
 	int getHealth() const {
 		return _health;
 	}
-
-	constexpr static int UNIT_PRICES[] = {10, 12, 20};
 };
 
 

@@ -2,10 +2,11 @@
 // Created by nonoreve on 1/5/21.
 //
 
-#include <iostream>
 #include "units/Archer.hpp"
 
-Archer::Archer(Position position, Base target) : Unit(8, 3, position, target) {
+#include <iostream>
+
+Archer::Archer(Player& owner, Base &target) : Unit(8, 3, owner, target) {
 }
 
 ActionType Archer::getAction(int actionPhase) {

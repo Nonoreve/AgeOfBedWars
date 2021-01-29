@@ -4,11 +4,12 @@
 
 #include "units/Infantryman.hpp"
 
-Infantryman::Infantryman(Position position, Base target) : Unit(10, 4, position, target), _dalekMode(false) {}
+Infantryman::Infantryman(Player &owner, Base &target) : Unit(10, 4, owner, target), _dalekMode(false) {
+}
 
 void Infantryman::upgrade() {
-    // we don't check for multiple upgrading, just overwrite it.
-    _dalekMode = true;
+	// we don't check for multiple upgrading, just overwrite it.
+	_dalekMode = true;
 }
 
 ActionType Infantryman::getAction(int actionPhase) {
@@ -18,7 +19,7 @@ ActionType Infantryman::getAction(int actionPhase) {
 		case 2:
 			return MOVE;
 		case 3:
-			if(_dalekMode)
+			if (_dalekMode)
 				return ATTACK;
 			return IDLE; // TODO attack if phase 1 failed
 		default:

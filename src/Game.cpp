@@ -15,7 +15,7 @@
 #define OPTIONALARGUMENTS 1
 
 template<class Iterator>
-Base opponentBase(const std::vector<Player> &players, Iterator currentPlayer, Battlefield &terrain) {
+Base &opponentBase(const std::vector<Player> &players, Iterator currentPlayer, Battlefield &terrain) {
 	if (players.size() == 2) {
 		auto otherPlayer = currentPlayer == players.begin() ? currentPlayer + 1 : players.begin();
 		return terrain.getBase(std::distance(players.begin(), otherPlayer));
@@ -41,9 +41,9 @@ UnitType parseUnitName(string unitName) {
 auto prices() {
 	std::ostringstream prices;
 	prices << "Available Units : " << std::endl;
-	prices << "\tInfantry : $" << Unit::UNIT_PRICES[0];
-	prices << "\tArcher : $" << Unit::UNIT_PRICES[1];
-	prices << "\tCatapult : $" << Unit::UNIT_PRICES[2];
+	prices << "\tInfantry : $" << Player::UNIT_PRICES[0];
+	prices << "\tArcher : $" << Player::UNIT_PRICES[1];
+	prices << "\tCatapult : $" << Player::UNIT_PRICES[2];
 	return prices.str();
 }
 
@@ -86,14 +86,15 @@ int main(int argc, char *argv[]) {
 	int winner = -1;
 	while (winner == -1 && round < 100) { // TODO rounds as argument and progressive bar
 		std::cout << std::endl << std::endl << "Round number " << round << std::endl;
-		// all 3 action phases
-		terrain.playActions();
 		// distributes money for all the players
 		std::for_each(players.begin(), players.end(), [&](Player &p) { p.pay(moneyPerTurn); });
 		auto currentPlayer = players.begin();
 		while (currentPlayer != players.end() && winner == -1) {
 			terrain.drawTerrain();
-			std::cout << "Its the turn of " << currentPlayer->getName() << "\n\t" << currentPlayer->report() << std::endl;
+			// all 3 action phases
+			terrain.playActions(*currentPlayer);
+			std::cout << "Its the turn of " << currentPlayer->getName() << "\n\t" << currentPlayer->report()
+			          << std::endl;
 			std::cout << prices() << std::endl << std::endl;
 
 			// summoning phase
@@ -106,8 +107,8 @@ int main(int argc, char *argv[]) {
 					std::cin >> unit;
 					UnitType unitType = parseUnitName(unit);
 					if (unitType != UNKNOWN) {
-						if (currentPlayer->canAfford(Unit::UNIT_PRICES[unitType])) {
-							if (unitPool.unitFactory(unitType, currentPlayer->getBase().getPosition(),
+						if (currentPlayer->canAfford(Player::UNIT_PRICES[unitType])) {
+							if (unitPool.unitFactory(unitType, *currentPlayer,
 							                         opponentBase(players, currentPlayer, terrain)) == nullptr) {
 								std::cout << "Unit summoning failed. You have " << std::endl;
 							} else {

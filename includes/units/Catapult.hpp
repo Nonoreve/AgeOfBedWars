@@ -9,7 +9,7 @@
 
 class Catapult : public Unit {
 public:
-	Catapult(Position position, Base target);
+	Catapult(Player& owner, Base &target);
 
 	ActionType getAction(int actionPhase) override;
 

@@ -6,11 +6,10 @@
 #define AGEOFBEDWARS_PLAYER_HPP
 
 #include "Base.hpp"
-#include "units/Unit.hpp"
+#include "units/UnitType.hpp"
 
 #include <string>
 #include <vector>
-#include <units/UnitPool.hpp>
 
 using std::string, std::vector;
 
@@ -35,9 +34,11 @@ public:
 	 */
 	void pay(int money);
 
-	bool canAfford(int price);
+	bool canAfford(int price) const;
 
 	void buy(UnitType unitType);
+
+	bool operator==(const Player &rhs) const;
 
 	inline const string &getName() const {
 		return _name;
@@ -46,6 +47,8 @@ public:
 	const Base &getBase() const {
 		return _base;
 	}
+
+	constexpr static int UNIT_PRICES[] = {10, 12, 20};
 };
 
 

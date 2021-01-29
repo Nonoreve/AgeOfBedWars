@@ -12,7 +12,7 @@ private:
 	bool _dalekMode;
 
 public:
-	Infantryman(Position position, Base target);
+	Infantryman(Player &owner, Base &target);
 
 	void upgrade();
 

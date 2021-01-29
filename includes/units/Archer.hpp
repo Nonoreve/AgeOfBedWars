@@ -9,7 +9,7 @@
 
 class Archer : public Unit {
 public:
-	Archer(Position position, Base target);
+	Archer(Player& owner, Base &target);
 
 	ActionType getAction(int actionPhase) override;
 

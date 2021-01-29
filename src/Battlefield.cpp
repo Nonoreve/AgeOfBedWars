@@ -87,7 +87,7 @@ Battlefield::Battlefield(UnitPool &unitPool, const string &filename, int baseHea
 		          << std::endl;
 		printBackground(_background);
 	}
-};
+}
 
 int Battlefield::_baseIndex = 0;
 
@@ -106,21 +106,31 @@ int Battlefield::basesStatus() {
 	return destroyedBaseFound ? (int) std::distance(_bases.begin(), currentBase) : -1;
 }
 
-void Battlefield::playActions() {
-	std::vector<Position> allPos = _unitPool.getAllPositions();
+vector<Position> Battlefield::filter(vector<Position> allPos, Player &currentPlayer) {
+	vector<Position> playerPos;
+	std::for_each(allPos.begin(), allPos.end(), [&](const Position &pos) {
+		if (_unitPool.getUnit(pos)->belongsTo(currentPlayer))
+			playerPos.push_back(pos);
+	});
+	return playerPos;
+}
+
+void Battlefield::playActions(Player &currentPlayer) {
+	vector<Position> playerPos = filter(_unitPool.getAllPositions(), currentPlayer);
+	// TODO orders are not right anymore should sort units by their distance to target
 	// phase 1
-	for (int i = (int) allPos.size() - 1; i >= 0; i--) {
-		doActionPhase(1, _unitPool.getUnit(allPos.at(i)));
+	for (int i = (int) playerPos.size() - 1; i >= 0; i--) {
+		doActionPhase(1, _unitPool.getUnit(playerPos.at(i)));
 	}
-	allPos = _unitPool.getAllPositions();
+	playerPos = _unitPool.getAllPositions();
 	// phase 2
-	for (int i = 0; i < allPos.size(); i++) {
-		doActionPhase(2, _unitPool.getUnit(allPos.at(i)));
+	for (int i = 0; i < playerPos.size(); i++) {
+		doActionPhase(2, _unitPool.getUnit(playerPos.at(i)));
 	}
-	allPos = _unitPool.getAllPositions();
+	playerPos = _unitPool.getAllPositions();
 	// phase 3
-	for (int i = 0; i < allPos.size(); i++) {
-		doActionPhase(3, _unitPool.getUnit(allPos.at(i)));
+	for (int i = 0; i < playerPos.size(); i++) {
+		doActionPhase(3, _unitPool.getUnit(playerPos.at(i)));
 	}
 }
 

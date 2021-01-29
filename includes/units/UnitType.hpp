@@ -1,0 +1,15 @@
+//
+// Created by nonoreve on 1/29/21.
+//
+
+#ifndef AGEOFBEDWARS_UNITTYPE_HPP
+#define AGEOFBEDWARS_UNITTYPE_HPP
+
+enum ActionType {
+	MOVE, ATTACK, IDLE
+};
+
+enum UnitType {
+	INFANTRYMAN, ARCHER, CATAPULT, UNKNOWN
+};
+#endif //AGEOFBEDWARS_UNITTYPE_HPP

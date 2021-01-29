@@ -4,10 +4,11 @@
 
 #include "Base.hpp"
 
-Base::Base(int health, Position position) : _health(health), _position(position) {}
+Base::Base(int health, Position position) : _health(health), _position(position) {
+}
 
 const Position &Base::getPosition() const {
-    return _position;
+	return _position;
 }
 
 void Base::takeDamage(int damages) {
@@ -16,4 +17,8 @@ void Base::takeDamage(int damages) {
 
 bool Base::stillAlive() const {
 	return _health > 0;
+}
+
+bool Base::operator==(const Base &rhs) const {
+	return _position == rhs._position && _mark == rhs._mark;
 }
