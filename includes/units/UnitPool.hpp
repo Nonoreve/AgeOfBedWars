@@ -17,10 +17,8 @@ namespace std {
 		std::size_t operator()(Position const &pos) const noexcept {
 			std::size_t h1 = std::hash<int>{}(pos.x);
 			std::size_t h2 = std::hash<int>{}(pos.y);
-			// we want to shift h2 the number of digits (in decimal) of h1
-			// so we take its power of 2 and shift this amout in binary
-			// inch'allah it works
-			int power = std::sqrt(h1);
+			// shift h2 the number of digits of h1
+			int power = (int) std::ceil(std::log2(h1)) + 1;
 			return h1 + (h2 << power);
 		}
 	};

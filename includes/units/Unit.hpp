@@ -34,14 +34,20 @@ public:
 
 	virtual std::pair<Position, int> attack() = 0;
 
-	virtual Position& move();
+	virtual Position &move();
 
 	virtual void takeDamages(int damages);
 
 	virtual bool stillAlive() const;
 
-	inline virtual const Position getPosition() const {
+	virtual bool targetReached();
+
+	inline virtual Position getPosition() const {
 		return _position;
+	}
+
+	int getHealth() const {
+		return _health;
 	}
 
 	constexpr static int UNIT_PRICES[] = {10, 12, 20};

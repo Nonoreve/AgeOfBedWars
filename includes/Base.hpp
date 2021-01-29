@@ -24,6 +24,10 @@ public:
 
 	bool stillAlive() const;
 
+	int getHealth() const {
+		return _health;
+	}
+
 	char getMark() const {
 		return _mark;
 	}

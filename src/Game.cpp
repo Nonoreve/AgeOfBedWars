@@ -84,8 +84,8 @@ int main(int argc, char *argv[]) {
 	std::cout << std::endl << " - - - - - Age of Bed Wars - - - - -\n" << std::endl;
 	int round = 0;
 	int winner = -1;
-	while (winner == -1 && round < 100) {
-		std::cout << std::endl << "Round number " << round << std::endl;
+	while (winner == -1 && round < 100) { // TODO rounds as argument and progressive bar
+		std::cout << std::endl << std::endl << "Round number " << round << std::endl;
 		// all 3 action phases
 		terrain.playActions();
 		// distributes money for all the players
@@ -93,7 +93,7 @@ int main(int argc, char *argv[]) {
 		auto currentPlayer = players.begin();
 		while (currentPlayer != players.end() && winner == -1) {
 			terrain.drawTerrain();
-			std::cout << "Turn of " << currentPlayer->getName() << "\n\t" << currentPlayer->report() << std::endl;
+			std::cout << "Its the turn of " << currentPlayer->getName() << "\n\t" << currentPlayer->report() << std::endl;
 			std::cout << prices() << std::endl << std::endl;
 
 			// summoning phase
