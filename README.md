@@ -11,7 +11,7 @@ Then run `make` to compile.
 
 # Execution
 Usage : `./AgeOfBedWars <backgroundFile> <baseHealth> <moneyPerTurn> [initialMoneyAmount]`
-<arguments> are required. [arguments] are optionnal.
+`<arguments>` are required. `[arguments]` are optionnal.
   backgroundFile : A file containing the terrain parameters. See `Battlefield.cpp` for file structure. 
     A default file is provided is provided in resources/
     The file as extension .background but all the extensions are accepted if intern file structure is correct.
