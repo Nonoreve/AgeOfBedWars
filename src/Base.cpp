@@ -13,3 +13,7 @@ const Position &Base::getPosition() const {
 void Base::takeDamage(int damages) {
 	_health -= damages;
 }
+
+bool Base::stillAlive() const {
+	return _health > 0;
+}

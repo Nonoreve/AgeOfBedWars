@@ -22,7 +22,8 @@ ActionType Infantryman::getAction(int actionPhase) {
 				return ATTACK;
 			return IDLE; // TODO attack if phase 1 failed
 		default:
-			return IDLE; // TODO throw error ?
+			std::cerr << "There is only 3 action phases" << std::endl;
+			return IDLE;
 	}
 }
 

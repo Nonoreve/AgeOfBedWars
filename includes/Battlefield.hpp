@@ -39,23 +39,26 @@ public:
 
 	/**
 	 * The bases are created and attached in the order of the Positions in the file.
+	 * PlayerName is requested to edit the Base marks
 	 * @return
 	 */
-	inline Base &getBaseInCreatedOrder() {
-		return _bases.at(_baseIndex++);
-	}
+	Base &getBaseInCreatedOrder(const string &playerName);
 
 	/**
 	 *
 	 * @return The index of the first destroyed base found or -1.
 	 */
-	int basesStatus(); // TODO move to Base
+	int basesStatus();
 
 	/**
 	 * Process the right action for all the units.
 	 */
 	void playActions();
-
+/**
+ * Only target Units (not bases)
+ * @param position
+ * @param damages
+ */
 	void hitThere(Position position, int damages);
 
 	/**

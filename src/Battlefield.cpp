@@ -21,7 +21,7 @@ Battlefield::Battlefield(UnitPool &unitPool, const string &filename, int baseHea
 	if (!istrm.is_open()) {
 		std::cerr << "Failed to open " << filename << std::endl;
 	} else {
-		int sizeX = 1, sizeY = 1; // TODO read sizeY (upgrade parser)
+		int sizeX = 1, sizeY = 1; // TODO read sizeY (upgrade parser to YAML)
 		if (!(istrm >> sizeX)) {
 			std::cerr << "Error reading file : Background files should start by the size of the grid." << std::endl;
 			std::exit(-1);
@@ -40,7 +40,7 @@ Battlefield::Battlefield(UnitPool &unitPool, const string &filename, int baseHea
 		while (!posOver && iss >> x >> y) {
 			std::cout << "New position : x=" << x << " y=" << y << std::endl;
 			_bases.emplace_back(baseHealth, Position(x, y));
-			char comma = '\0';
+			char comma = '\0'; // TODO all the positions should be different
 			iss >> comma; // trying to read a comma
 			posOver = comma == '\0'; // if nothing is read we reached the end of the line
 			if (comma != ',' && !posOver) {
@@ -77,11 +77,16 @@ Battlefield::Battlefield(UnitPool &unitPool, const string &filename, int baseHea
 
 int Battlefield::_baseIndex = 0;
 
+Base &Battlefield::getBaseInCreatedOrder(const string &playerName) {
+	_bases.at(_baseIndex).setMark(std::toupper(playerName.at(0)));
+	return _bases.at(_baseIndex++);
+}
+
 int Battlefield::basesStatus() {
 	bool destroyedBaseFound = false;
 	auto currentBase = _bases.begin();
 	while (currentBase != _bases.end() && !destroyedBaseFound) {
-		destroyedBaseFound = currentBase->getHealth() <= 0;
+		destroyedBaseFound = !currentBase->stillAlive();
 		++currentBase;
 	}
 	return destroyedBaseFound ? (int) std::distance(_bases.begin(), currentBase) : -1;
@@ -90,7 +95,7 @@ int Battlefield::basesStatus() {
 void Battlefield::playActions() {
 	std::vector<Position> allPos = _unitPool.getAllPositions();
 	// phase 1
-	for (int i = allPos.size() - 1; i >= 0; i--) {
+	for (int i = (int) allPos.size() - 1; i >= 0; i--) {
 		doActionPhase(1, _unitPool.getUnit(allPos.at(i)));
 	}
 	allPos = _unitPool.getAllPositions();
@@ -114,6 +119,17 @@ void Battlefield::doActionPhase(int actionPhase, Unit *unit) {
 		case ATTACK: {
 			std::pair result = unit->attack();
 			hitThere(result.first, result.second);
+			// hit bases
+			bool baseFound = false;
+			auto it = _bases.begin();
+			while (!baseFound && it != _bases.end()) {
+				if (it->getPosition() == unit->getPosition()) {
+					it->takeDamage(result.second);
+					_unitPool.remove(unit->getPosition());
+					baseFound = true;
+				}
+				++it;
+			}
 		}
 			break;
 		case IDLE: // do nothing
@@ -122,9 +138,10 @@ void Battlefield::doActionPhase(int actionPhase, Unit *unit) {
 }
 
 void Battlefield::hitThere(Position position, int damages) {
-	if (!_unitPool.isCellFree(position)) { // TODO player reward
+	if (!_unitPool.isCellFree(position)) {
 		_unitPool.getUnit(position)->takeDamages(damages);
 		if (!_unitPool.getUnit(position)->stillAlive()) {
+			// TODO player reward
 			_unitPool.remove(position);
 		}
 	}
@@ -133,13 +150,22 @@ void Battlefield::hitThere(Position position, int damages) {
 void Battlefield::drawTerrain() {
 	std::cout << "Current state of terrain : " << std::endl;
 	vector<vector<char>> frame = _background;
-	float charPerCellX = (float) frame[0].size() / (float) _cellsGrid.first;
+	float charPerCellX = (float) (frame[0].size() - 1) / (float) _cellsGrid.first; // -1 for linefeed
 	float charPerCellY = (float) frame.size() / (float) _cellsGrid.second;
+	int offsetX = 3; // TODO offsets
+	int offsetY = 2;
+	// draw bases marks
+	for (auto &base : _bases) {
+		editTerrainAt(frame, (int) std::round(charPerCellX * (float) base.getPosition().x) + offsetX,
+		              (int) std::round(charPerCellY * (float) base.getPosition().y) + offsetY, base.getMark());
+	}
+	// draw units
 	for (auto &pos : _unitPool.getAllPositions()) {
-		editTerrainAt(frame, (int) std::round(charPerCellX * (float) pos.x),
-		              (int) std::round(charPerCellY * (float) pos.y), 'X');
+		editTerrainAt(frame, (int) std::round(charPerCellX * (float) pos.x) + offsetX,
+		              (int) std::round(charPerCellY * (float) pos.y) + offsetY, 'X');
 	}
 	printBackground(frame);
+	// TODO print health of unit or base under each case
 }
 
 void Battlefield::printBackground(vector<vector<char>> &terrain) {

@@ -13,6 +13,7 @@ private:
     int _health;
     // position in cell coordinates
     const Position _position;
+    char _mark;
 
 public:
     explicit Base(int health, Position position);
@@ -21,8 +22,14 @@ public:
 
     const Position &getPosition() const;
 
-	inline int getHealth() const{
-		return _health;
+	bool stillAlive() const;
+
+	char getMark() const {
+		return _mark;
+	}
+
+	void setMark(char mark) {
+		_mark = mark;
 	}
 };
 

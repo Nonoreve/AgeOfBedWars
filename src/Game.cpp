@@ -41,9 +41,9 @@ UnitType parseUnitName(string unitName) {
 auto prices() {
 	std::ostringstream prices;
 	prices << "Available Units : " << std::endl;
-	prices << "\tInfantry : $" << Unit::UNIT_PRICES[0] << std::endl;
-	prices << "\tArcher : $" << Unit::UNIT_PRICES[1] << std::endl;
-	prices << "\tCatapult : $" << Unit::UNIT_PRICES[2] << std::endl;
+	prices << "\tInfantry : $" << Unit::UNIT_PRICES[0];
+	prices << "\tArcher : $" << Unit::UNIT_PRICES[1];
+	prices << "\tCatapult : $" << Unit::UNIT_PRICES[2];
 	return prices.str();
 }
 
@@ -74,14 +74,14 @@ int main(int argc, char *argv[]) {
 		std::cout << "Enter name for player " << i << " : ";
 		string name;
 		if (std::cin >> name) {
-			players.emplace_back(name, initialMoneyAmount, terrain.getBaseInCreatedOrder());
+			players.emplace_back(name, initialMoneyAmount, terrain.getBaseInCreatedOrder(name));
 			i++;
 		} else {
 			std::cout << "Invalid name. Try again." << std::endl;
 		}
 	}
 
-	std::cout << " - - - - - Age of Bed Wars - - - - -\n" << std::endl;
+	std::cout << std::endl << " - - - - - Age of Bed Wars - - - - -\n" << std::endl;
 	int round = 0;
 	int winner = -1;
 	while (winner == -1 && round < 100) {
@@ -92,8 +92,9 @@ int main(int argc, char *argv[]) {
 		std::for_each(players.begin(), players.end(), [&](Player &p) { p.pay(moneyPerTurn); });
 		auto currentPlayer = players.begin();
 		while (currentPlayer != players.end() && winner == -1) {
+			terrain.drawTerrain();
 			std::cout << "Turn of " << currentPlayer->getName() << "\n\t" << currentPlayer->report() << std::endl;
-			std::cout << prices() << std::endl;
+			std::cout << prices() << std::endl << std::endl;
 
 			// summoning phase
 			if (unitPool.isCellFree(currentPlayer->getBase().getPosition())) {
@@ -127,7 +128,6 @@ int main(int argc, char *argv[]) {
 			} else {
 				std::cout << "You can't summon for now your base is occupied." << std::endl;
 			}
-			terrain.drawTerrain();
 			// check for a winner
 			winner = terrain.basesStatus();
 			++currentPlayer;
