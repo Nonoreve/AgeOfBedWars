@@ -192,7 +192,7 @@ void Battlefield::drawTerrain() {
 	// draw units
 	for (auto &pos : _unitPool.getAllPositions()) {
 		editTerrainAt(frame, (int) std::round(charPerCellX * (float) pos.x) + offsetX,
-		              (int) std::round(charPerCellY * (float) pos.y) + offsetY, 'X');
+		              (int) std::round(charPerCellY * (float) pos.y) + offsetY, _unitPool.getUnit(pos)->getMark());
 		string health = std::to_string(_unitPool.getUnit(pos)->getHealth());
 		for (int i = 0; i < health.size(); i++) {
 			int cOffset = offsetX - health.size() / 2 + i;

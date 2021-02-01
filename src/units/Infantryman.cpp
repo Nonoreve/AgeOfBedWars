@@ -4,7 +4,7 @@
 
 #include "units/Infantryman.hpp"
 
-Infantryman::Infantryman(Player &owner, Base &target) : Unit(10, 4, owner, target), _dalekMode(false) {
+Infantryman::Infantryman(Player &owner, Base &target) : Unit(10, 4, owner, target, 'I'), _dalekMode(false) {
 }
 
 void Infantryman::upgrade() {

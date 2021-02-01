@@ -19,8 +19,9 @@ protected:
 	Base _target;
 	Position _position;
 	int _strikePower;
+	const char _mark;
 
-	Unit(int health, int strikePower, Player &player, Base &target);
+	Unit(int health, int strikePower, Player &player, Base &target, char mark);
 
 public:
 	virtual ActionType getAction(int actionPhase) = 0;
@@ -36,6 +37,10 @@ public:
 	virtual bool targetReached();
 
 	virtual bool belongsTo(Player &player) const;
+
+	char getMark() const {
+		return _mark;
+	}
 
 	inline Position getPosition() const {
 		return _position;

@@ -6,7 +6,7 @@
 
 #include <iostream>
 
-Catapult::Catapult(Player& owner, Base &target) : Unit(12, 6, owner, target) {
+Catapult::Catapult(Player& owner, Base &target) : Unit(12, 6, owner, target, 'C') {
 }
 
 ActionType Catapult::getAction(int actionPhase) {
