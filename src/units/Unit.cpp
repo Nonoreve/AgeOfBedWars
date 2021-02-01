@@ -34,11 +34,7 @@ Position &Unit::move() {
 		if (h < 0) dy2 = -1; else if (h > 0) dy2 = 1;
 		dx2 = 0;
 	}
-	int numerator = longest >> 1; // longest * 2
-	// next is in loop for full line drawing but we only are interested in the next point
-	numerator += shortest;
-	if (numerator >= longest) {
-		numerator -= longest;
+	if ((longest >> 1) + shortest >= longest) {
 		_position.x += dx1;
 		_position.y += dy1;
 	} else {

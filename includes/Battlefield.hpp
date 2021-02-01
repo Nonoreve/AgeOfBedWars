@@ -23,8 +23,6 @@ private:
 
 	void doActionPhase(int actionPhase, Unit *unit);
 
-	vector<Position> filter(vector<Position> allPos, Player &currentPlayer);
-
 	static int _baseIndex;
 
 	static void printBackground(vector<vector<char>> &terrain);

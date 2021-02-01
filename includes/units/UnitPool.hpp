@@ -43,8 +43,18 @@ public:
 	 * @return
 	 */
 	bool isCellFree(Position position) const;
-
+/**
+ * Return a vector containing all the key positions
+ * @return
+ */
 	std::vector<Position> getAllPositions() const;
+
+	/**
+	 * Return only the positions were the unit belongs to the given player
+	 * @param currentPlayer
+	 * @return
+	 */
+	vector<Position> filter(Player &currentPlayer);
 
 	Unit *getUnit(Position position) const;
 };

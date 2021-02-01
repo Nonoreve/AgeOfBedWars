@@ -106,17 +106,8 @@ int Battlefield::basesStatus() {
 	return destroyedBaseFound ? (int) std::distance(_bases.begin(), currentBase) : -1;
 }
 
-vector<Position> Battlefield::filter(vector<Position> allPos, Player &currentPlayer) {
-	vector<Position> playerPos;
-	std::for_each(allPos.begin(), allPos.end(), [&](const Position &pos) {
-		if (_unitPool.getUnit(pos)->belongsTo(currentPlayer))
-			playerPos.push_back(pos);
-	});
-	return playerPos;
-}
-
 void Battlefield::playActions(Player &currentPlayer) {
-	vector<Position> playerPos = filter(_unitPool.getAllPositions(), currentPlayer);
+	vector<Position> playerPos = _unitPool.filter(currentPlayer);
 	// TODO orders are not right anymore should sort units by their distance to target
 	// phase 1
 	for (int i = (int) playerPos.size() - 1; i >= 0; i--) {

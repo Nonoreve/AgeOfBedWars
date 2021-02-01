@@ -61,6 +61,15 @@ std::vector<Position> UnitPool::getAllPositions() const {
 	return positions;
 }
 
+vector<Position> UnitPool::filter(Player &currentPlayer) {
+	vector<Position> playerPos;
+	for (const auto &current : _pool) {
+		if (current.second->belongsTo(currentPlayer))
+			playerPos.push_back(current.first);
+	}
+	return playerPos;
+}
+
 Unit *UnitPool::getUnit(Position position) const {
 	if (isCellFree(position)) {
 		std::cerr << "No unit at position (" << position.x << ", " << position.y << ")" << std::endl;
