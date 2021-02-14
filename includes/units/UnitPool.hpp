@@ -33,7 +33,7 @@ public:
 
 	Unit *unitFactory(UnitType unitType, Player &player, Base &target);
 
-	void move(Position destination, Position origin);
+	bool move(Position destination, Position origin);
 
 	void remove(Position position);
 
@@ -43,18 +43,24 @@ public:
 	 * @return
 	 */
 	bool isCellFree(Position position) const;
-/**
- * Return a vector containing all the key positions
- * @return
- */
+
+	/**
+	 * Return a vector containing all the key positions
+	 * @return
+	 */
 	std::vector<Position> getAllPositions() const;
 
 	/**
-	 * Return only the positions were the unit belongs to the given player
 	 * @param currentPlayer
-	 * @return
+	 * @return Only the positions were the unit belongs to the given player sorted by their distance to players's base
 	 */
-	vector<Position> filter(Player &currentPlayer);
+	vector<Position> getHisArmy(Player &currentPlayer);
+
+	/**
+	 * @param unit
+	 * @return All the units that are on the same line as the given one and that have not the same owner sorted by their distance to target
+	 */
+	vector<Position> getHisEnnemies(Unit *unit);
 
 	Unit *getUnit(Position position) const;
 };

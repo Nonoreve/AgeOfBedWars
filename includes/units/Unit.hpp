@@ -26,9 +26,16 @@ protected:
 public:
 	virtual ActionType getAction(int actionPhase) = 0;
 
-	virtual std::pair<Position, int> attack() = 0;
+	/**
+	 * @param ennemies The positions of the ennemies that are on the same line as this unit.
+	 * (Ennemies that targets the Base of the owner of this Unit)
+	 * @return All teh cell positions that the unit strikes
+	 */
+	virtual std::pair<vector<Position>, int> attack(vector<Position> ennemies) = 0;
 
-	virtual Position &move();
+	virtual Position nextWantedPotition();
+
+	virtual void move();
 
 	virtual void takeDamages(int damages);
 
@@ -37,6 +44,8 @@ public:
 	virtual bool targetReached();
 
 	virtual bool belongsTo(Player &player) const;
+
+	virtual bool sameOwner(Unit *other) const;
 
 	char getMark() const {
 		return _mark;
@@ -48,6 +57,10 @@ public:
 
 	int getHealth() const {
 		return _health;
+	}
+
+	const Position &getTargetPostion() const {
+		return _target.getPosition();
 	}
 };
 

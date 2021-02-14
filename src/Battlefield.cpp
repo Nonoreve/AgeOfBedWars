@@ -52,8 +52,8 @@ Battlefield::Battlefield(UnitPool &unitPool, const string &filename, int baseHea
 		if (loadedBases() > 2) {
 			bool validForm = false;
 			while (!validForm) {
-				std::cout << "The file dont support second dimension for cells but there are more than two bases.\n"
-				             "So please enter horizontal number of cells : ";
+				std::cout << "The file don't support second dimension for cells but there are more than two bases.\n"
+				             "Please enter horizontal number of cells : ";
 				std::cin >> sizeY;
 				if (!std::cin.fail()) {
 					_cellsGrid.second = sizeY;
@@ -107,18 +107,17 @@ int Battlefield::basesStatus() {
 }
 
 void Battlefield::playActions(Player &currentPlayer) {
-	vector<Position> playerPos = _unitPool.filter(currentPlayer);
-	// TODO orders are not right anymore should sort units by their distance to target
+	vector<Position> playerPos = _unitPool.getHisArmy(currentPlayer);
 	// phase 1
 	for (int i = (int) playerPos.size() - 1; i >= 0; i--) {
 		doActionPhase(1, _unitPool.getUnit(playerPos.at(i)));
 	}
-	playerPos = _unitPool.getAllPositions();
+	playerPos = _unitPool.getHisArmy(currentPlayer);
 	// phase 2
 	for (int i = 0; i < playerPos.size(); i++) {
 		doActionPhase(2, _unitPool.getUnit(playerPos.at(i)));
 	}
-	playerPos = _unitPool.getAllPositions();
+	playerPos = _unitPool.getHisArmy(currentPlayer);
 	// phase 3
 	for (int i = 0; i < playerPos.size(); i++) {
 		doActionPhase(3, _unitPool.getUnit(playerPos.at(i)));
@@ -128,12 +127,13 @@ void Battlefield::playActions(Player &currentPlayer) {
 void Battlefield::doActionPhase(int actionPhase, Unit *unit) {
 	switch (unit->getAction(actionPhase)) {
 		case MOVE:
-			// destination is rightmost because we want to apply the move after getting its previous value
-			_unitPool.move(unit->move(), unit->getPosition());
+			if (_unitPool.move(unit->nextWantedPotition(), unit->getPosition()))
+				unit->move();
 			break;
 		case ATTACK: {
-			std::pair result = unit->attack();
-			hitThere(result.first, result.second);
+			std::pair result = unit->attack(_unitPool.getHisEnnemies(unit));
+			for (auto p : result.first)
+				hitThere(p, result.second);
 			// hit bases
 			bool baseFound = false;
 			auto it = _bases.begin();
@@ -177,7 +177,7 @@ void Battlefield::drawTerrain() {
 		for (int i = 0; i < health.size(); i++) {
 			int cOffset = offsetX - health.size() / 2 + i;
 			editTerrainAt(frame, (int) std::round(charPerCellX * (float) base.getPosition().x) + cOffset,
-			              (int) std::round(charPerCellY * (float) base.getPosition().y) + offsetY + 1, health.at(i));
+			              (int) std::round(charPerCellY * (float) base.getPosition().y) + offsetY + 1, health.at(i)); // TODO base health below grid
 		}
 	}
 	// draw units

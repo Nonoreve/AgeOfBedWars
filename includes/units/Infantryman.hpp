@@ -18,7 +18,7 @@ public:
 
 	ActionType getAction(int actionPhase) override;
 
-	std::pair<Position, int> attack() override;
+	std::pair<vector<Position>, int> attack(vector<Position> ennemies) override;
 
 };
 

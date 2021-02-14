@@ -13,35 +13,34 @@ Unit::Unit(int health, int strikePower, Player &owner, Base &target, const char 
 
 }
 
-Position &Unit::move() {
-	int x2 = _target.getPosition().x;
-	int y2 = _target.getPosition().y;
-	int w = x2 - _position.x;
-	int h = y2 - _position.y;
-	int dx1 = 0, dy1 = 0, dx2 = 0, dy2 = 0;
-	if (w < 0) {
-		dx1 = -1;
-		dx2 = -1;
-	} else if (w > 0) {
-		dx1 = 1;
-		dx2 = 1;
+Position Unit::nextWantedPotition() {
+	int longest, shortest, dx1, dy1, dx2, dy2;
+	std::tie(longest, shortest, dx1, dy1, dx2, dy2) = Position::prepareBresenhamValues(_position,
+	                                                                                   _target.getPosition());
+	int numerator = longest * 2;
+	Position pos = _position;
+	if (numerator + shortest >= longest) {
+		pos.x += dx1;
+		pos.y += dy1;
+	} else {
+		pos.x += dx2;
+		pos.y += dy2;
 	}
-	if (h < 0) dy1 = -1; else if (h > 0) dy1 = 1;
-	int longest = std::abs(w);
-	int shortest = std::abs(h);
-	if (longest <= shortest) {
-		std::swap(longest, shortest);
-		if (h < 0) dy2 = -1; else if (h > 0) dy2 = 1;
-		dx2 = 0;
-	}
-	if ((longest >> 1) + shortest >= longest) {
+	return pos;
+}
+
+void Unit::move() {
+	int longest, shortest, dx1, dy1, dx2, dy2;
+	std::tie(longest, shortest, dx1, dy1, dx2, dy2) = Position::prepareBresenhamValues(_position,
+	                                                                                   _target.getPosition());
+	int numerator = longest * 2;
+	if (numerator + shortest >= longest) {
 		_position.x += dx1;
 		_position.y += dy1;
 	} else {
 		_position.x += dx2;
 		_position.y += dy2;
 	}
-	return _position;
 }
 
 void Unit::takeDamages(int damages) {
@@ -58,4 +57,8 @@ bool Unit::targetReached() {
 
 bool Unit::belongsTo(Player &player) const {
 	return _owner == player;
+}
+
+bool Unit::sameOwner(Unit *other) const {
+	return _owner == other->_owner;
 }

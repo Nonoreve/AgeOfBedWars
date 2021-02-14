@@ -28,34 +28,26 @@ ActionType Infantryman::getAction(int actionPhase) {
 	}
 }
 
-std::pair<Position, int> Infantryman::attack() {
-	int x1 = _position.x;
-	int y1 = _position.y;
-	int x2 = _target.getPosition().x;
-	int y2 = _target.getPosition().y;
-	int w = x2 - x1;
-	int h = y2 - y1;
-	int dx1 = 0, dy1 = 0, dx2 = 0, dy2 = 0;
-	if (w < 0) dx1 = -1; else if (w > 0) dx1 = 1;
-	if (h < 0) dy1 = -1; else if (h > 0) dy1 = 1;
-	if (w < 0) dx2 = -1; else if (w > 0) dx2 = 1;
-	int longest = std::abs(w);
-	int shortest = std::abs(h);
-	if (longest <= shortest) {
-		std::swap(longest, shortest);
-		if (h < 0) dy2 = -1; else if (h > 0) dy2 = 1;
-		dx2 = 0;
-	}
-	int numerator = longest >> 1; // longest * 2
+/**
+ * A blind strike on the cell in front of him
+ * @param ennemies
+ * @return
+ */
+std::pair<vector<Position>, int> Infantryman::attack(vector<Position> ennemies) {
+	Position pos = _position;
+	int longest, shortest, dx1, dy1, dx2, dy2;
+	std::tie(longest, shortest, dx1, dy1, dx2, dy2) = Position::prepareBresenhamValues(_position, _target.getPosition());
+	int numerator = longest * 2;
 	// next is in loop for full line drawing but we only are interested in the next point
 	numerator += shortest;
 	if (numerator >= longest) {
 		numerator -= longest;
-		x1 += dx1;
-		y1 += dy1;
+		pos.x += dx1;
+		pos.y += dy1;
 	} else {
-		x1 += dx2;
-		y1 += dy2;
+		pos.x += dx2;
+		pos.y += dy2;
 	}
-	return std::make_pair(Position(x1, y1), _strikePower);
+	vector<Position> v({pos});
+	return std::make_pair(v, _strikePower);
 }
