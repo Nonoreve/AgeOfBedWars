@@ -7,7 +7,7 @@
 #include <iostream>
 #include <algorithm>
 
-Catapult::Catapult(Player &owner, Base &target) : Unit(12, 6, owner, target, 'C') {
+Catapult::Catapult(Player &owner, Base &target) : Unit(12, 6, owner, target, string("C") + owner.getMark()) {
 }
 
 ActionType Catapult::getAction(int actionPhase) {

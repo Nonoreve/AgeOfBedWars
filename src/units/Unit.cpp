@@ -4,16 +4,16 @@
 
 #include "units/Unit.hpp"
 
-Unit::Unit(int health, int strikePower, Player &owner, Base &target, const char mark) : _health(health),
-                                                                                        _strikePower(strikePower),
-                                                                                        _position(
-		                                                                                        owner.getBase().getPosition()),
-                                                                                        _target(target), _owner(owner),
-                                                                                        _mark(mark) {
+Unit::Unit(int health, int strikePower, Player &owner, Base &target, const string &label) : _health(health),
+                                                                                            _strikePower(strikePower),
+                                                                                            _position(
+		                                                                                           owner.getBase().getPosition()),
+                                                                                            _target(target),
+                                                                                            _owner(owner), _label(label) {
 
 }
 
-Position Unit::nextWantedPotition() {
+Position Unit::nextWantedPosition() {
 	int longest, shortest, dx1, dy1, dx2, dy2;
 	std::tie(longest, shortest, dx1, dy1, dx2, dy2) = Position::prepareBresenhamValues(_position,
 	                                                                                   _target.getPosition());
@@ -52,7 +52,7 @@ bool Unit::stillAlive() const {
 }
 
 bool Unit::targetReached() {
-	return _position == _target.getPosition();
+	return nextWantedPosition() == _target.getPosition();
 }
 
 bool Unit::belongsTo(Player &player) const {

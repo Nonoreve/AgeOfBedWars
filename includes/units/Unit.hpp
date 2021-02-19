@@ -19,9 +19,9 @@ protected:
 	Base _target;
 	Position _position;
 	int _strikePower;
-	const char _mark;
+	const string _label;
 
-	Unit(int health, int strikePower, Player &player, Base &target, char mark);
+	Unit(int health, int strikePower, Player &player, Base &target, const string &label);
 
 public:
 	virtual ActionType getAction(int actionPhase) = 0;
@@ -33,7 +33,7 @@ public:
 	 */
 	virtual std::pair<vector<Position>, int> attack(vector<Position> ennemies) = 0;
 
-	virtual Position nextWantedPotition();
+	virtual Position nextWantedPosition();
 
 	virtual void move();
 
@@ -47,8 +47,8 @@ public:
 
 	virtual bool sameOwner(Unit *other) const;
 
-	char getMark() const {
-		return _mark;
+	const string & getLabel() const {
+		return _label;
 	}
 
 	inline Position getPosition() const {

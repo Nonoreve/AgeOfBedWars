@@ -4,10 +4,11 @@
 
 #include "units/Infantryman.hpp"
 
-Infantryman::Infantryman(Player &owner, Base &target) : Unit(10, 4, owner, target, 'I'), _dalekMode(false) {
+Infantryman::Infantryman(Player &owner, Base &target) : Unit(10, 4, owner, target, string("I") + owner.getMark()),
+                                                        _dalekMode(false) {
 }
 
-void Infantryman::upgrade() {
+void Infantryman::upgrade() { // TODO use
 	// we don't check for multiple upgrading, just overwrite it.
 	_dalekMode = true;
 }
@@ -36,7 +37,8 @@ ActionType Infantryman::getAction(int actionPhase) {
 std::pair<vector<Position>, int> Infantryman::attack(vector<Position> ennemies) {
 	Position pos = _position;
 	int longest, shortest, dx1, dy1, dx2, dy2;
-	std::tie(longest, shortest, dx1, dy1, dx2, dy2) = Position::prepareBresenhamValues(_position, _target.getPosition());
+	std::tie(longest, shortest, dx1, dy1, dx2, dy2) = Position::prepareBresenhamValues(_position,
+	                                                                                   _target.getPosition());
 	int numerator = longest * 2;
 	// next is in loop for full line drawing but we only are interested in the next point
 	numerator += shortest;

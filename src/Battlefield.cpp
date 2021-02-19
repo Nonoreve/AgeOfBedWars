@@ -64,7 +64,7 @@ Battlefield::Battlefield(UnitPool &unitPool, const string &filename, int baseHea
 			}
 		}
 
-		// TODO unit sprites
+		// TODO unit sprites (and unit animations)
 		while (!istrm.eof()) {
 			getline(istrm, line);
 			line.push_back('\n');
@@ -127,19 +127,21 @@ void Battlefield::playActions(Player &currentPlayer) {
 void Battlefield::doActionPhase(int actionPhase, Unit *unit) {
 	switch (unit->getAction(actionPhase)) {
 		case MOVE:
-			if (_unitPool.move(unit->nextWantedPotition(), unit->getPosition()))
+			if (unit->targetReached())
+				break; // stop unit before target cell
+			if (_unitPool.move(unit->nextWantedPosition(), unit->getPosition()))
 				unit->move();
 			break;
 		case ATTACK: {
 			std::pair result = unit->attack(_unitPool.getHisEnnemies(unit));
 			for (auto p : result.first)
-				hitThere(p, result.second);
+				hitThere(p, result.second); // TODO don't attack unit on your side
 			// hit bases
-			bool baseFound = false;
+			bool baseFound = false; // TODO don't attack unit and base at the same time
 			auto it = _bases.begin();
 			while (!baseFound && it != _bases.end()) {
 				if (unit->targetReached() && unit->getPosition() == it->getPosition()) {
-					it->takeDamage(result.second);
+					it->takeDamage(result.second); // TODO damages not dealt
 					_unitPool.remove(unit->getPosition());
 					baseFound = true;
 				}
@@ -177,13 +179,20 @@ void Battlefield::drawTerrain() {
 		for (int i = 0; i < health.size(); i++) {
 			int cOffset = offsetX - health.size() / 2 + i;
 			editTerrainAt(frame, (int) std::round(charPerCellX * (float) base.getPosition().x) + cOffset,
-			              (int) std::round(charPerCellY * (float) base.getPosition().y) + offsetY + 1, health.at(i)); // TODO base health below grid
+			              (int) std::round(charPerCellY * (float) base.getPosition().y) + offsetY + 1,
+			              health.at(i)); // TODO base health below grid
 		}
 	}
 	// draw units
 	for (auto &pos : _unitPool.getAllPositions()) {
-		editTerrainAt(frame, (int) std::round(charPerCellX * (float) pos.x) + offsetX,
-		              (int) std::round(charPerCellY * (float) pos.y) + offsetY, _unitPool.getUnit(pos)->getMark());
+		string label = _unitPool.getUnit(pos)->getLabel();
+		for (int i = 0; i < label.size(); i++) {
+			int cOffset = offsetX - label.size() / 2 + i;
+			editTerrainAt(frame, (int) std::round(charPerCellX * (float) pos.x) + cOffset,
+			              (int) std::round(charPerCellY * (float) pos.y) + offsetY, label.at(i));
+		}
+		//		editTerrainAt(frame, (int) std::round(charPerCellX * (float) pos.x) + offsetX,
+		//		              (int) std::round(charPerCellY * (float) pos.y) + offsetY, _unitPool.getUnit(pos)->getMark());
 		string health = std::to_string(_unitPool.getUnit(pos)->getHealth());
 		for (int i = 0; i < health.size(); i++) {
 			int cOffset = offsetX - health.size() / 2 + i;

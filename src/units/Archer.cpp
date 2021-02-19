@@ -6,7 +6,7 @@
 
 #include <iostream>
 
-Archer::Archer(Player &owner, Base &target) : Unit(8, 3, owner, target, 'A') {
+Archer::Archer(Player &owner, Base &target) : Unit(8, 3, owner, target, string("A") + owner.getMark()) {
 }
 
 ActionType Archer::getAction(int actionPhase) {

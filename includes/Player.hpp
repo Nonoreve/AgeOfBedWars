@@ -40,7 +40,11 @@ public:
 
 	bool operator==(const Player &rhs) const;
 
-	inline const string &getName() const {
+	const char getMark() const {
+		return std::toupper(_name.at(0));
+	}
+
+	const string &getName() const {
 		return _name;
 	}
 
