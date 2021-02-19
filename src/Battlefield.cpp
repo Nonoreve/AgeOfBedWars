@@ -125,7 +125,7 @@ void Battlefield::playActions(Player &currentPlayer) {
 }
 
 void Battlefield::doActionPhase(int actionPhase, Unit *unit) {
-	switch (unit->getAction(actionPhase)) {
+	switch (unit->getAction(actionPhase)) { // TODO the whole process might be cleaned up
 		case MOVE:
 			if (unit->targetReached())
 				break; // stop unit before target cell
@@ -135,7 +135,7 @@ void Battlefield::doActionPhase(int actionPhase, Unit *unit) {
 		case ATTACK: {
 			std::pair result = unit->attack(_unitPool.getHisEnnemies(unit));
 			for (auto p : result.first)
-				hitThere(p, result.second); // TODO don't attack unit on your side
+				hitThere(p, result.second);
 			// hit bases
 			bool baseFound = false; // TODO don't attack unit and base at the same time
 			auto it = _bases.begin();
