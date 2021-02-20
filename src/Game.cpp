@@ -92,8 +92,8 @@ int main(int argc, char *argv[]) {
 		while (currentPlayer != players.end() && looser == -1) {
 			// all 3 action phases
 			terrain.playActions(*currentPlayer);
-			std::cout << std::endl;
-			terrain.drawTerrain();
+//			std::cout << std::endl;
+//			terrain.drawTerrain();
 			std::cout << "Its the turn of " << currentPlayer->getName() << "\n\t" << currentPlayer->report()
 			          << std::endl;
 			std::cout << prices() << std::endl << std::endl;

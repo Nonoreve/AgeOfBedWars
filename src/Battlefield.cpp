@@ -108,20 +108,26 @@ int Battlefield::basesStatus() {
 
 void Battlefield::playActions(Player &currentPlayer) {
 	vector<Position> playerPos = _unitPool.getHisArmy(currentPlayer);
-	// phase 1
+
+	std::cout << "Phase 1 for " << currentPlayer.getName() << std::endl;
 	for (int i = (int) playerPos.size() - 1; i >= 0; i--) {
 		doActionPhase(1, _unitPool.getUnit(playerPos.at(i)));
 	}
+	drawTerrain();
+
+	std::cout << "Phase 2 for " << currentPlayer.getName() << std::endl;
 	playerPos = _unitPool.getHisArmy(currentPlayer);
-	// phase 2
 	for (int i = 0; i < playerPos.size(); i++) {
 		doActionPhase(2, _unitPool.getUnit(playerPos.at(i)));
 	}
+	drawTerrain();
+
+	std::cout << "Phase 3 for " << currentPlayer.getName() << std::endl;
 	playerPos = _unitPool.getHisArmy(currentPlayer);
-	// phase 3
 	for (int i = 0; i < playerPos.size(); i++) {
 		doActionPhase(3, _unitPool.getUnit(playerPos.at(i)));
 	}
+	drawTerrain();
 }
 
 void Battlefield::doActionPhase(int actionPhase, Unit *unit) {
