@@ -83,14 +83,14 @@ int main(int argc, char *argv[]) {
 
 	std::cout << std::endl << " - - - - - Age of Bed Wars - - - - -\n" << std::endl;
 	int round = 0;
-	int winner = -1;
-	while (winner == -1 && round < 100) { // TODO rounds as argument and progressive bar
+	int looser = -1;
+	while (looser == -1 && round < 100) { // TODO rounds as argument and progressive bar
 		std::cout << std::endl << std::endl << "Round number " << round << std::endl;
 		// distributes money for all the players
 		std::for_each(players.begin(), players.end(), [&](Player &p) { p.pay(moneyPerTurn); });
 		auto currentPlayer = players.begin();
-		while (currentPlayer != players.end() && winner == -1) {
-			terrain.drawTerrain();
+		while (currentPlayer != players.end() && looser == -1) {
+			terrain.drawTerrain(); // TODO fix print
 			// all 3 action phases
 			terrain.playActions(*currentPlayer);
 			std::cout << "Its the turn of " << currentPlayer->getName() << "\n\t" << currentPlayer->report()
@@ -129,14 +129,14 @@ int main(int argc, char *argv[]) {
 			} else {
 				std::cout << "You can't summon for now your base is occupied." << std::endl;
 			}
-			// check for a winner
-			winner = terrain.basesStatus();
+			// check for a looser
+			looser = terrain.basesStatus();
 			++currentPlayer;
 		}
 		round++;
 	}
 	if (round < 100)
-		std::cout << "The winner is " << players.at(winner).getName() << std::endl;
+		std::cout << "The looser is " << players.at(looser).getName() << std::endl; // TODO look for winner
 	else
 		std::cout << "Game Over" << std::endl;
 	return 0;

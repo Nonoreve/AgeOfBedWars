@@ -103,7 +103,7 @@ int Battlefield::basesStatus() {
 		destroyedBaseFound = !currentBase->stillAlive();
 		++currentBase;
 	}
-	return destroyedBaseFound ? (int) std::distance(_bases.begin(), currentBase) : -1;
+	return destroyedBaseFound ? (int) std::distance(_bases.begin(), currentBase) - 1 : -1;
 }
 
 void Battlefield::playActions(Player &currentPlayer) {
@@ -140,8 +140,8 @@ void Battlefield::doActionPhase(int actionPhase, Unit *unit) {
 			bool baseFound = false; // TODO don't attack unit and base at the same time
 			auto it = _bases.begin();
 			while (!baseFound && it != _bases.end()) {
-				if (unit->targetReached() && unit->getPosition() == it->getPosition()) {
-					it->takeDamage(result.second); // TODO damages not dealt
+				if (unit->targetReached() && unit->getTargetPostion() == it->getPosition()) {
+					it->takeDamage(result.second);
 					_unitPool.remove(unit->getPosition());
 					baseFound = true;
 				}

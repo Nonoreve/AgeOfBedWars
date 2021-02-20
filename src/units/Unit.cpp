@@ -7,9 +7,10 @@
 Unit::Unit(int health, int strikePower, Player &owner, Base &target, const string &label) : _health(health),
                                                                                             _strikePower(strikePower),
                                                                                             _position(
-		                                                                                           owner.getBase().getPosition()),
+		                                                                                            owner.getBase().getPosition()),
                                                                                             _target(target),
-                                                                                            _owner(owner), _label(label) {
+                                                                                            _owner(owner),
+                                                                                            _label(label) {
 
 }
 
@@ -52,7 +53,7 @@ bool Unit::stillAlive() const {
 }
 
 bool Unit::targetReached() {
-	return nextWantedPosition() == _target.getPosition();
+	return _position.distance(_target.getPosition()) <= 1;
 }
 
 bool Unit::belongsTo(Player &player) const {
