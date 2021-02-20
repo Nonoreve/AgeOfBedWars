@@ -137,16 +137,19 @@ void Battlefield::doActionPhase(int actionPhase, Unit *unit) {
 			for (auto p : result.first)
 				hitThere(p, result.second);
 			// hit bases
-			bool baseFound = false; // TODO don't attack unit and base at the same time
+			bool baseFound = false;
 			auto it = _bases.begin();
 			while (!baseFound && it != _bases.end()) {
-				if (unit->targetReached() && unit->getTargetPostion() == it->getPosition()) {
-					it->takeDamage(result.second);
-					_unitPool.remove(unit->getPosition());
+				if (unit->getTargetPostion() == it->getPosition()) {
 					baseFound = true;
+					if (unit->targetReached() && _unitPool.isCellFree(it->getPosition())) {
+						it->takeDamage(result.second);
+						_unitPool.remove(unit->getPosition());
+					}
 				}
 				++it;
 			}
+			buryCorpses(); // done after base hitting to avoid hitting unit and base at the same time
 		}
 			break;
 		case IDLE: // do nothing
@@ -159,9 +162,15 @@ void Battlefield::hitThere(Position position, int damages) {
 		_unitPool.getUnit(position)->takeDamages(damages);
 		if (!_unitPool.getUnit(position)->stillAlive()) {
 			// TODO player reward
-			_unitPool.remove(position);
 		}
 	}
+}
+
+void Battlefield::buryCorpses() {
+	for (Position position : _unitPool.getAllPositions())
+		if (!_unitPool.getUnit(position)->stillAlive()) {
+			_unitPool.remove(position);
+		}
 }
 
 void Battlefield::drawTerrain() {

@@ -23,6 +23,8 @@ private:
 
 	void doActionPhase(int actionPhase, Unit *unit);
 
+	void buryCorpses();
+
 	static int _baseIndex;
 
 	static void printBackground(vector<vector<char>> &terrain);

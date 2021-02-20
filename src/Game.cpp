@@ -90,9 +90,10 @@ int main(int argc, char *argv[]) {
 		std::for_each(players.begin(), players.end(), [&](Player &p) { p.pay(moneyPerTurn); });
 		auto currentPlayer = players.begin();
 		while (currentPlayer != players.end() && looser == -1) {
-			terrain.drawTerrain(); // TODO fix print
 			// all 3 action phases
 			terrain.playActions(*currentPlayer);
+			std::cout << std::endl;
+			terrain.drawTerrain();
 			std::cout << "Its the turn of " << currentPlayer->getName() << "\n\t" << currentPlayer->report()
 			          << std::endl;
 			std::cout << prices() << std::endl << std::endl;
@@ -127,7 +128,8 @@ int main(int argc, char *argv[]) {
 					}
 				}
 			} else {
-				std::cout << "You can't summon for now your base is occupied." << std::endl;
+				std::cout << "You can't summon for now your base is occupied. (press any key)" << std::endl;
+				std::cin.get();
 			}
 			// check for a looser
 			looser = terrain.basesStatus();
@@ -136,8 +138,10 @@ int main(int argc, char *argv[]) {
 		round++;
 	}
 	if (round < 100)
-		std::cout << "The looser is " << players.at(looser).getName() << std::endl; // TODO look for winner
+		std::cout << "The looser is " << players.at(looser).getName(); // TODO look for winner
 	else
-		std::cout << "Game Over" << std::endl;
+		std::cout << "Game Over";
+	std::cout << " (press any key)" << std::endl;
+	std::cin.get();
 	return 0;
 }
