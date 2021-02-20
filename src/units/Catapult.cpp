@@ -24,12 +24,38 @@ ActionType Catapult::getAction(int actionPhase) {
 	}
 }
 
-std::pair<vector<Position>, int> Catapult::attack(vector<Position> ennemies) {
-	Position first = ennemies.front();
-	// we take the closest ennemy and strike it if in range TODO adapt for catapult
-	if (first.distance(_position) < 3) {
-		vector<Position> v({first});
-		return std::make_pair(v, _strikePower);
+Position next(Position origin, Position target) { // TODO move to Postition.h
+	int longest, shortest, dx1, dy1, dx2, dy2;
+	std::tie(longest, shortest, dx1, dy1, dx2, dy2) = Position::prepareBresenhamValues(origin, target);
+	int numerator = longest * 2;
+	Position result = origin;
+	numerator += shortest;
+	if (numerator >= longest) {
+		result.x += dx1;
+		result.y += dy1;
+	} else {
+		result.x += dx2;
+		result.y += dy2;
 	}
-	return std::make_pair(vector<Position>{}, 0);
+	return result;
+}
+
+std::pair<vector<Position>, int> Catapult::attack(vector<Position> ennemies) {
+	vector<Position> v;
+	auto it = ennemies.begin();
+	// skip ennemies that are too close
+	while (it != ennemies.end() && it->distance(_position) < 2) {
+		++it;
+	}
+	if (it != ennemies.end()) {
+		if (it->distance(_position) <= 3) {
+			v.push_back(*it);
+			v.push_back(next(*it, _target.getPosition()));
+		} else if (it->distance(_position) <= 4) {
+			v.push_back(*it);
+			// we give it our own base position to get the previous case
+			v.push_back(next(*it, _owner.getBase().getPosition()));
+		}
+	}
+	return std::make_pair(v, _strikePower);
 }

@@ -13,10 +13,10 @@
 class Unit {
 private:
 	int _health;
-	Player _owner;
 
 protected:
 	Base _target;
+	Player _owner;
 	Position _position;
 	int _strikePower;
 	const string _label;

@@ -45,7 +45,7 @@ std::pair<vector<Position>, int> Infantryman::attack(vector<Position> ennemies) 
 	// next is in loop for full line drawing but we only are interested in the next point
 	numerator += shortest;
 	if (numerator >= longest) {
-		numerator -= longest;
+		numerator -= longest; // useless without loop
 		pos.x += dx1;
 		pos.y += dy1;
 	} else {
