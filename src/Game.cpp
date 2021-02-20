@@ -106,6 +106,8 @@ int main(int argc, char *argv[]) {
 					std::cout << "Do you want to summon a new unit ? "
 					             "(infantry|archer|catapult|none)" << std::endl;
 					std::cin >> unit;
+					std::cin.clear();
+					std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // flush stream
 					UnitType unitType = parseUnitName(unit);
 					if (unitType != UNKNOWN) {
 						if (currentPlayer->canAfford(Player::UNIT_PRICES[unitType])) {
@@ -130,6 +132,8 @@ int main(int argc, char *argv[]) {
 			} else {
 				std::cout << "You can't summon for now your base is occupied. (press any key)" << std::endl;
 				std::cin.get();
+				std::cin.clear();
+				std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // flush stream
 			}
 			// check for a looser
 			looser = terrain.basesStatus();

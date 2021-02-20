@@ -32,7 +32,7 @@ ActionType Infantryman::getAction(int actionPhase) {
 }
 
 /**
- * A blind strike on the cell in front of him
+ * Strike the cell in front of him
  * @param ennemies
  * @return
  */
