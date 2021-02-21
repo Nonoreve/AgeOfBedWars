@@ -12,7 +12,7 @@
 #include <vector>
 
 using std::string, std::vector;
-
+// TODO AI
 class Player {
 private:
 	string _name;

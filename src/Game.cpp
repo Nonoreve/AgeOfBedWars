@@ -92,52 +92,52 @@ int main(int argc, char *argv[]) {
 		while (currentPlayer != players.end() && loser == -1) {
 			// all 3 action phases
 			terrain.playActions(*currentPlayer);
-//			std::cout << std::endl;
-//			terrain.drawTerrain();
-			std::cout << "Its the turn of " << currentPlayer->getName() << "\n\t" << currentPlayer->report()
-			          << std::endl;
-			std::cout << prices() << std::endl << std::endl;
-
-			// summoning phase
-			if (unitPool.isCellFree(currentPlayer->getBase().getPosition())) {
-				bool validForm = false;
-				while (!validForm) {
-					string unit;
-					std::cout << "Do you want to summon a new unit ? "
-					             "(infantry|archer|catapult|none)" << std::endl;
-					std::cin >> unit;
-					std::cin.clear();
-					std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // flush stream
-					UnitType unitType = parseUnitName(unit);
-					if (unitType != UNKNOWN) {
-						if (currentPlayer->canAfford(Player::UNIT_PRICES[unitType])) {
-							if (unitPool.unitFactory(unitType, *currentPlayer,
-							                         opponentBase(players, currentPlayer, terrain)) == nullptr) {
-								std::cout << "Unit summoning failed. You have " << std::endl;
-							} else {
-								currentPlayer->buy(unitType);
-								validForm = true;
-							}
-						} else {
-							std::cout << "Can't afford this unit. You have " << currentPlayer->report()
-							          << " money left." << std::endl;
-						}
-					} else if (unit == "none") {
-						std::cout << "No unit summoned." << std::endl;
-						validForm = true;
-					} else {
-						std::cout << "Wrong unit name : " << unit << ". Try again." << std::endl;
-					}
-				}
-			} else {
-				std::cout << "You can't summon for now your base is occupied. (press any key)" << std::endl;
-				std::cin.get();
-				std::cin.clear();
-				std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // flush stream
-			}
 			// check for a loser
 			loser = terrain.basesStatus();
-			++currentPlayer;
+			if (loser == -1) {
+				std::cout << "Its the turn of " << currentPlayer->getName() << "\n\t" << currentPlayer->report()
+				          << std::endl;
+				std::cout << prices() << std::endl << std::endl;
+
+				// summoning phase
+				if (unitPool.isCellFree(currentPlayer->getBase().getPosition())) {
+					bool validForm = false;
+					while (!validForm) {
+						string unit;
+						std::cout << "Do you want to summon a new unit ? "
+						             "(infantry|archer|catapult|none)" << std::endl;
+						std::cin >> unit;
+						std::cin.clear();
+						std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // flush stream
+						UnitType unitType = parseUnitName(unit);
+						if (unitType != UNKNOWN) {
+							if (currentPlayer->canAfford(Player::UNIT_PRICES[unitType])) {
+								if (unitPool.unitFactory(unitType, *currentPlayer,
+								                         opponentBase(players, currentPlayer, terrain)) == nullptr) {
+									std::cout << "Unit summoning failed. You have " << std::endl;
+								} else {
+									currentPlayer->buy(unitType);
+									validForm = true;
+								}
+							} else {
+								std::cout << "Can't afford this unit. You have " << currentPlayer->report()
+								          << " money left." << std::endl;
+							}
+						} else if (unit == "none") {
+							std::cout << "No unit summoned." << std::endl;
+							validForm = true;
+						} else {
+							std::cout << "Wrong unit name : " << unit << ". Try again." << std::endl;
+						}
+					}
+				} else {
+					std::cout << "You can't summon for now your base is occupied. (press any key)" << std::endl;
+					std::cin.get();
+					std::cin.clear();
+					std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // flush stream
+				}
+				++currentPlayer;
+			}
 		}
 		round++;
 	}
