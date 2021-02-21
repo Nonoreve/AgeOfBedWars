@@ -34,5 +34,5 @@ std::pair<vector<Position>, int> Archer::attack(vector<Position> ennemies) {
 			return std::make_pair(v, _strikePower);
 		}
 	}
-	return std::make_pair(vector<Position>{}, 0);
+	return std::make_pair(vector<Position>{}, _strikePower);
 }
