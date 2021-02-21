@@ -6,8 +6,8 @@
 
 #include <algorithm>
 
-Infantryman::Infantryman(Player &owner, Base &target) : Unit(10, 4, owner, target, string("I") + owner.getMark()),
-                                                        _dalekMode(false) {
+Infantryman::Infantryman(Player &owner, Base &target) : Unit(10, 4, owner, target, string("I") + owner.getMark(),
+                                                             UnitType::INFANTRYMAN), _dalekMode(false) {
 }
 
 void Infantryman::upgrade() { // TODO use
@@ -24,9 +24,11 @@ ActionType Infantryman::getAction(int actionPhase) {
 		case 3:
 			if (_dalekMode)
 				return ATTACK;
-			return IDLE; // TODO attack if phase 1 failed
+			if (!_sucessfullPhases[0])
+				return ATTACK;
+			return IDLE;
 		default:
-			std::cerr << "There is only 3 action phases" << std::endl;
+			std::cerr << "Invalid action" << std::endl;
 			return IDLE;
 	}
 }
@@ -54,7 +56,9 @@ std::pair<vector<Position>, int> Infantryman::attack(vector<Position> ennemies) 
 	}
 	vector<Position> v;
 	// check if ennemy or ally
-	if(std::find(ennemies.begin(), ennemies.end(), pos) != ennemies.end())
+	if (std::find(ennemies.begin(), ennemies.end(), pos) != ennemies.end()) {
 		v.push_back(pos);
+		_sucessfullPhases[0] = true;
+	} else _sucessfullPhases[0] = false;
 	return std::make_pair(v, _strikePower);
 }

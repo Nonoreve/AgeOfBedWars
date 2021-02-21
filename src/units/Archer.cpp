@@ -5,8 +5,10 @@
 #include "units/Archer.hpp"
 
 #include <iostream>
+#include <ffi.h>
 
-Archer::Archer(Player &owner, Base &target) : Unit(8, 3, owner, target, string("A") + owner.getMark()) {
+Archer::Archer(Player &owner, Base &target) : Unit(8, 3, owner, target, string("A") + owner.getMark(),
+                                                   UnitType::ARCHER) {
 }
 
 ActionType Archer::getAction(int actionPhase) {
@@ -18,7 +20,7 @@ ActionType Archer::getAction(int actionPhase) {
 		case 3:
 			return IDLE;
 		default:
-			std::cerr << "INVALID MOVE" << std::endl;
+			std::cerr << "Invalid action" << std::endl;
 			return IDLE;
 	}
 }

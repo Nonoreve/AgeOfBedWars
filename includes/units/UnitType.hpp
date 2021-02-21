@@ -5,6 +5,8 @@
 #ifndef AGEOFBEDWARS_UNITTYPE_HPP
 #define AGEOFBEDWARS_UNITTYPE_HPP
 
+#define ACTION_PHASES 3
+
 enum ActionType {
 	MOVE, ATTACK, IDLE
 };

@@ -140,8 +140,11 @@ void Battlefield::doActionPhase(int actionPhase, Unit *unit) {
 			break;
 		case ATTACK: {
 			std::pair result = unit->attack(_unitPool.getHisEnnemies(unit));
-			for (auto p : result.first)
-				hitThere(p, result.second);
+			for (auto p : result.first) {
+				auto type = hitThere(p, result.second);
+				if (type != UnitType::UNKNOWN)
+					unit->rewardOwner(type);
+			}
 			// hit bases
 			bool baseFound = false;
 			auto it = _bases.begin();
@@ -155,7 +158,7 @@ void Battlefield::doActionPhase(int actionPhase, Unit *unit) {
 				}
 				++it;
 			}
-			buryCorpses(); // done after base hitting to avoid hitting unit and base at the same time
+			buryCorpses(); // done after base damages to avoid hitting unit and base at the same time
 		}
 			break;
 		case IDLE: // do nothing
@@ -163,13 +166,14 @@ void Battlefield::doActionPhase(int actionPhase, Unit *unit) {
 	}
 }
 
-void Battlefield::hitThere(Position position, int damages) {
+UnitType Battlefield::hitThere(Position position, int damages) {
 	if (!_unitPool.isCellFree(position)) {
 		_unitPool.getUnit(position)->takeDamages(damages);
 		if (!_unitPool.getUnit(position)->stillAlive()) {
-			// TODO player reward
+			return _unitPool.getUnit(position)->getType();
 		}
 	}
+	return UnitType::UNKNOWN;
 }
 
 void Battlefield::buryCorpses() {

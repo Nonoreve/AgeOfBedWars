@@ -20,8 +20,10 @@ protected:
 	Position _position;
 	int _strikePower;
 	const string _label;
+	bool _sucessfullPhases[ACTION_PHASES];
+	const UnitType _type; // TODO this is disgusting, alternative is template Unit
 
-	Unit(int health, int strikePower, Player &player, Base &target, const string &label);
+	Unit(int health, int strikePower, Player &player, Base &target, const string &label, const UnitType type);
 
 public:
 	virtual ActionType getAction(int actionPhase) = 0;
@@ -47,7 +49,13 @@ public:
 
 	virtual bool sameOwner(Unit *other) const;
 
-	const string & getLabel() const {
+	virtual void rewardOwner(UnitType type);
+
+	UnitType getType() const {
+		return _type;
+	}
+
+	const string &getLabel() const {
 		return _label;
 	}
 

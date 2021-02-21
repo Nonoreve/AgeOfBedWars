@@ -62,8 +62,9 @@ public:
 	 * Only target Units (not bases)
 	 * @param position
 	 * @param damages
+	 * @return the type of the unit if it was killed, UNKNOWN otherwise
 	 */
-	void hitThere(Position position, int damages);
+	UnitType hitThere(Position position, int damages);
 
 	/**
 	 * Draw the background and all Units above
