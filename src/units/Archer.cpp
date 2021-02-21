@@ -26,11 +26,13 @@ ActionType Archer::getAction(int actionPhase) {
 }
 
 std::pair<vector<Position>, int> Archer::attack(vector<Position> ennemies) {
-	Position first = ennemies.front();
-	// we take the closest ennemy and strike it if in range
-	if (first.distance(_position) <= 3) {
-		vector<Position> v({first});
-		return std::make_pair(v, _strikePower);
+	if (!ennemies.empty()) {
+		Position first = ennemies.front();
+		// we take the closest ennemy and strike it if in range
+		if (first.distance(_position) <= 3) {
+			vector<Position> v({first});
+			return std::make_pair(v, _strikePower);
+		}
 	}
 	return std::make_pair(vector<Position>{}, 0);
 }
