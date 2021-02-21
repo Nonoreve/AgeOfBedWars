@@ -10,7 +10,7 @@ Infantryman::Infantryman(Player &owner, Base &target) : Unit(10, 4, owner, targe
                                                              UnitType::INFANTRYMAN), _dalekMode(false) {
 }
 
-void Infantryman::upgrade() { // TODO use
+void Infantryman::upgrade() {
 	// we don't check for multiple upgrading, just overwrite it.
 	_dalekMode = true;
 	_label = string("D") + _label[1];

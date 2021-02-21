@@ -21,7 +21,7 @@ Battlefield::Battlefield(UnitPool &unitPool, const string &filename, int baseHea
 	std::ifstream istrm(filename, std::ios::binary);
 	if (!istrm.is_open()) {
 		std::cerr << "Failed to open " << filename << std::endl;
-	} else {
+	} else {                      // TODO unit sprites (and unit animations)
 		int sizeX = 1, sizeY = 1; // TODO read sizeY (upgrade parser to YAML)
 		if (!(istrm >> sizeX)) {
 			std::cerr << "Error reading file : Background files should start by the size of the grid." << std::endl;
@@ -49,6 +49,7 @@ Battlefield::Battlefield(UnitPool &unitPool, const string &filename, int baseHea
 				std::exit(-1);
 			}
 		}
+
 		std::cout << "Finished reading " << loadedBases() << " bases Positions." << std::endl;
 		if (loadedBases() > 2) {
 			bool validForm = false;
@@ -65,12 +66,18 @@ Battlefield::Battlefield(UnitPool &unitPool, const string &filename, int baseHea
 			}
 		}
 
-		// TODO unit sprites (and unit animations)
 		while (!istrm.eof()) {
 			getline(istrm, line);
 			line.push_back('\n');
 			_background.emplace_back(line.begin(), line.end());
 		}
+		_background.at(_background.size() - 1).at(0) = ' '; // removing last LF
+		// fill last line with spaces based on the size of the line before
+		for (int i = 0; i < _background.at(_background.size() - 2).size(); i++) {
+			_background.at(_background.size() - 1).push_back(' ');
+		}
+		_background.at(_background.size() - 1).push_back('\n');
+
 		if (_background.empty()) {
 			std::cerr << "Error reading file : Background files should contain at least a string at line 3."
 			          << std::endl;
@@ -203,8 +210,7 @@ void Battlefield::drawTerrain() {
 		for (int i = 0; i < health.size(); i++) {
 			int cOffset = offsetX - health.size() / 2 + i;
 			editTerrainAt(frame, (int) std::round(charPerCellX * (float) base.getPosition().x) + cOffset,
-			              (int) std::round(charPerCellY * (float) base.getPosition().y) + offsetY + 1,
-			              health.at(i)); // TODO base health below grid
+			              (int) std::round(charPerCellY * (float) base.getPosition().y) + offsetY + 2, health.at(i));
 		}
 	}
 	// draw units
