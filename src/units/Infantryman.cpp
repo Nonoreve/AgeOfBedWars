@@ -13,6 +13,7 @@ Infantryman::Infantryman(Player &owner, Base &target) : Unit(10, 4, owner, targe
 void Infantryman::upgrade() { // TODO use
 	// we don't check for multiple upgrading, just overwrite it.
 	_dalekMode = true;
+	_label = string("D") + _label[1];
 }
 
 ActionType Infantryman::getAction(int actionPhase) {

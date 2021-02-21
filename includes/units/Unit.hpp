@@ -19,7 +19,7 @@ protected:
 	Player _owner;
 	Position _position;
 	int _strikePower;
-	const string _label;
+	string _label;
 	bool _sucessfullPhases[ACTION_PHASES];
 	const UnitType _type; // TODO this is disgusting, alternative is template Unit
 

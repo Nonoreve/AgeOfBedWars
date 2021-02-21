@@ -2,6 +2,7 @@
 // Created by nonoreve on 1/5/21.
 //
 #include "Battlefield.hpp"
+#include "units/Infantryman.hpp"
 
 #include <fstream>
 #include <iostream>
@@ -144,6 +145,10 @@ void Battlefield::doActionPhase(int actionPhase, Unit *unit) {
 				auto type = hitThere(p, result.second);
 				if (type != UnitType::UNKNOWN)
 					unit->rewardOwner(type);
+				if (type == UnitType::INFANTRYMAN && unit->getType() == INFANTRYMAN) {
+					auto *soldier = static_cast<Infantryman *>(unit); // NOLINT(cppcoreguidelines-pro-type-static-cast-downcast)
+					soldier->upgrade();
+				}
 			}
 			// hit bases
 			bool baseFound = false;
