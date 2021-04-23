@@ -20,9 +20,30 @@ Base &opponentBase(const std::vector<Player> &players, Iterator currentPlayer, B
 		auto otherPlayer = currentPlayer == players.begin() ? currentPlayer + 1 : players.begin();
 		return terrain.getBase(std::distance(players.begin(), otherPlayer));
 	} else {
-		// TODO ask current player which base to target
-		std::cerr << "More than 2 players not supported at the moment." << std::endl;
-		std::exit(-1);
+		// discard all the uppercases
+		string curPlName = currentPlayer->getName(); // copy
+		std::transform(curPlName.begin(), curPlName.end(), curPlName.begin(),
+		               [](unsigned char c) { return std::tolower(c); });
+		while (true) {
+			std::cout << "Enter the name of your target" << std::endl;
+			string targetName;
+			std::cin >> targetName;
+			std::transform(targetName.begin(), targetName.end(), targetName.begin(),
+			               [](unsigned char c) { return std::tolower(c); });
+			bool targetFound = false;
+			auto it = players.begin();
+			while (!targetFound && it != players.end()) {
+				string plName = it->getName();
+				std::transform(targetName.begin(), targetName.end(), targetName.begin(),
+				               [](unsigned char c) { return std::tolower(c); });
+				if (plName == targetName && targetName != curPlName)
+					targetFound = true;
+				++it;
+			}
+			if (targetFound) {
+				return terrain.getBase(std::distance(players.begin(), it));
+			} else std::cout << "This is not the name of any player. Try again." << std::endl;
+		}
 	}
 
 }
