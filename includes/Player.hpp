@@ -18,9 +18,10 @@ private:
 	string _name;
 	int _money;
 	Base _base;
+	bool _ai;
 
 public:
-	Player(string name, int initialMoneyAmount, Base base);
+	Player(string name, int initialMoneyAmount, Base base, bool ai = false);
 
 	/**
 	 * Provide information on the player.
@@ -38,6 +39,8 @@ public:
 
 	void buy(UnitType unitType);
 
+	UnitType chooseUnit() const;
+
 	bool operator==(const Player &rhs) const;
 
 	const char getMark() const {
@@ -50,6 +53,10 @@ public:
 
 	const Base &getBase() const {
 		return _base;
+	}
+
+	bool isAi() const {
+		return _ai;
 	}
 
 	constexpr static int UNIT_PRICES[] = {10, 12, 20};

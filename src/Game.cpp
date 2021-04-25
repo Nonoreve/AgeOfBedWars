@@ -10,6 +10,8 @@
 #include <iostream>
 #include <algorithm>
 #include <sstream>
+#include <chrono>
+#include <thread>
 
 #define ARGUMENTS 3
 #define OPTIONALARGUMENTS 1
@@ -48,17 +50,6 @@ Base &opponentBase(const std::vector<Player> &players, Iterator currentPlayer, B
 
 }
 
-UnitType parseUnitName(string unitName) {
-	std::transform(unitName.begin(), unitName.end(), unitName.begin(), [](unsigned char c) { return std::tolower(c); });
-	if (unitName == "infantry")
-		return UnitType::INFANTRYMAN;
-	if (unitName == "archer")
-		return UnitType::ARCHER;
-	if (unitName == "catapult")
-		return UnitType::CATAPULT;
-	return UNKNOWN;
-}
-
 auto prices() {
 	std::ostringstream prices;
 	prices << "Available Units : " << std::endl;
@@ -95,6 +86,11 @@ int main(int argc, char *argv[]) {
 		std::cout << "Enter name for player " << i << " : ";
 		string name;
 		if (std::cin >> name) {
+			std::cout << "Is this player an ai ? (Y|n) : ";
+			char yesNo;
+			std::cin >> yesNo;
+			if (std::toupper(yesNo) == 'Y')
+				players.emplace_back(name, initialMoneyAmount, terrain.getBaseInCreatedOrder(name), true);
 			players.emplace_back(name, initialMoneyAmount, terrain.getBaseInCreatedOrder(name));
 			i++;
 		} else {
@@ -124,38 +120,28 @@ int main(int argc, char *argv[]) {
 				if (unitPool.isCellFree(currentPlayer->getBase().getPosition())) {
 					bool validForm = false;
 					while (!validForm) {
-						string unit;
-						std::cout << "Do you want to summon a new unit ? "
-						             "(infantry|archer|catapult|none)" << std::endl;
-						std::cin >> unit;
-						std::cin.clear();
-						std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // flush stream
-						UnitType unitType = parseUnitName(unit);
+						UnitType unitType = currentPlayer->chooseUnit();
 						if (unitType != UNKNOWN) {
 							if (currentPlayer->canAfford(Player::UNIT_PRICES[unitType])) {
 								if (unitPool.unitFactory(unitType, *currentPlayer,
 								                         opponentBase(players, currentPlayer, terrain)) == nullptr) {
-									std::cout << "Unit summoning failed. You have " << std::endl;
+									std::cerr << "Unit summoning failed. " << std::endl;
+									std::exit(-1);
 								} else {
 									currentPlayer->buy(unitType);
 									validForm = true;
 								}
 							} else {
-								std::cout << "Can't afford this unit. You have " << currentPlayer->report()
-								          << " money left." << std::endl;
+								std::cout << "Can't afford this unit. " << currentPlayer->report() << std::endl;
 							}
-						} else if (unit == "none") {
-							std::cout << "No unit summoned." << std::endl;
-							validForm = true;
 						} else {
-							std::cout << "Wrong unit name : " << unit << ". Try again." << std::endl;
+							validForm = true;
 						}
 					}
 				} else {
-					std::cout << "You can't summon for now your base is occupied. (press any key)" << std::endl;
-					std::cin.get();
-					std::cin.clear();
-					std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // flush stream
+					std::cout << "You can't summon for now your base is occupied. Skipping in 3s." << std::endl;
+					std::chrono::milliseconds skipTime(3000);
+					std::this_thread::sleep_for(skipTime);
 				}
 				++currentPlayer;
 			}
