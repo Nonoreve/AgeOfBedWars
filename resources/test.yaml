@@ -1,0 +1,16 @@
+%TAG !position!
+grid:
+    X: 5
+    Y: 1 # presence of Y is optional and determines the need for Y in all other positions in the file
+bases:
+    - !position
+        X: 0
+        Y: 0
+    - !postion
+        X: 4
+        Y: 0
+background: |
+  _ _ _ _ _ _ _ _ _ _ _ _ _ _
+|     |     |     |     |     |
+|  A  |     |     |     |  B  |
+|_ _ _|_ _ _|_ _ _|_ _ _|_ _ _|

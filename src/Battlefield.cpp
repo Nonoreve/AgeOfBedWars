@@ -3,6 +3,7 @@
 //
 #include "Battlefield.hpp"
 #include "units/Infantryman.hpp"
+#include "yaml-cpp/yaml.h"
 
 #include <fstream>
 #include <iostream>
@@ -20,6 +21,9 @@
  * (third and more lines) caracter representation of the background of the battlefield
  */
 Battlefield::Battlefield(UnitPool &unitPool, const string &filename, int baseHealth) : _unitPool(unitPool) {
+	YAML::Node config = YAML::LoadFile(filename);
+	std::cout << "Loaded yaml : " << config.Type() << std::endl;
+
 	std::ifstream istrm(filename, std::ios::binary);
 	if (!istrm.is_open()) {
 		std::cerr << "Failed to open " << filename << std::endl;
