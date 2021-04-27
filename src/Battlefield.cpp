@@ -9,6 +9,8 @@
 #include <sstream>
 #include <algorithm>
 #include <tuple>
+#include <chrono>
+#include <thread>
 
 /**
  * Extract all battlefield informations from filename.
@@ -100,7 +102,7 @@ Battlefield::Battlefield(UnitPool &unitPool, const string &filename, int baseHea
 int Battlefield::_baseIndex = 0;
 
 Base &Battlefield::getBaseInCreatedOrder(const string &playerName) {
-	_bases.at(_baseIndex).setMark(std::toupper(playerName.at(0)));
+	_bases.at(_baseIndex).setMark((char) std::toupper(playerName.at(0)));
 	return _bases.at(_baseIndex++);
 }
 
@@ -118,12 +120,15 @@ void Battlefield::playActions(Player &currentPlayer) {
 	vector<Position> playerPos = _unitPool.getHisArmy(currentPlayer);
 
 	std::cout << "Phase 1 for " << currentPlayer.getName() << std::endl;
+	std::chrono::milliseconds skipTime(600);
+	std::this_thread::sleep_for(skipTime);
 	for (int i = (int) playerPos.size() - 1; i >= 0; i--) {
 		doActionPhase(1, _unitPool.getUnit(playerPos.at(i)));
 	}
 	drawTerrain();
 
 	std::cout << "Phase 2 for " << currentPlayer.getName() << std::endl;
+	std::this_thread::sleep_for(skipTime);
 	playerPos = _unitPool.getHisArmy(currentPlayer);
 	for (int i = 0; i < playerPos.size(); i++) {
 		doActionPhase(2, _unitPool.getUnit(playerPos.at(i)));
@@ -131,6 +136,7 @@ void Battlefield::playActions(Player &currentPlayer) {
 	drawTerrain();
 
 	std::cout << "Phase 3 for " << currentPlayer.getName() << std::endl;
+	std::this_thread::sleep_for(skipTime);
 	playerPos = _unitPool.getHisArmy(currentPlayer);
 	for (int i = 0; i < playerPos.size(); i++) {
 		doActionPhase(3, _unitPool.getUnit(playerPos.at(i)));

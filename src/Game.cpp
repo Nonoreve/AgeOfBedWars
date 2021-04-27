@@ -12,6 +12,7 @@
 #include <sstream>
 #include <chrono>
 #include <thread>
+#include <random>
 
 #define ARGUMENTS 3
 #define OPTIONALARGUMENTS 1
@@ -75,6 +76,8 @@ int main(int argc, char *argv[]) {
 	if (argc > ARGUMENTS + 1) {
 		initialMoneyAmount = std::stoi(argv[4]);
 	}
+	std::random_device rdev;
+	std::srand(rdev());
 
 	UnitPool unitPool;
 	Battlefield terrain(unitPool, backgroundFilename, baseHealth);
@@ -91,7 +94,8 @@ int main(int argc, char *argv[]) {
 			std::cin >> yesNo;
 			if (std::toupper(yesNo) == 'Y')
 				players.emplace_back(name, initialMoneyAmount, terrain.getBaseInCreatedOrder(name), true);
-			players.emplace_back(name, initialMoneyAmount, terrain.getBaseInCreatedOrder(name));
+			else
+				players.emplace_back(name, initialMoneyAmount, terrain.getBaseInCreatedOrder(name));
 			i++;
 		} else {
 			std::cout << "Invalid name. Try again." << std::endl;
@@ -107,14 +111,14 @@ int main(int argc, char *argv[]) {
 		std::for_each(players.begin(), players.end(), [&](Player &p) { p.pay(moneyPerTurn); });
 		auto currentPlayer = players.begin();
 		while (currentPlayer != players.end() && loser == -1) {
+			std::cout << std::endl << "Its the turn of " << currentPlayer->getName() << std::endl;
 			// all 3 action phases
 			terrain.playActions(*currentPlayer);
 			// check for a loser
 			loser = terrain.basesStatus();
 			if (loser == -1) {
-				std::cout << "Its the turn of " << currentPlayer->getName() << "\n\t" << currentPlayer->report()
-				          << std::endl;
 				std::cout << prices() << std::endl << std::endl;
+				std::cout << currentPlayer->report() << std::endl;
 
 				// summoning phase
 				if (unitPool.isCellFree(currentPlayer->getBase().getPosition())) {

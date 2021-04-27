@@ -43,8 +43,8 @@ public:
 
 	bool operator==(const Player &rhs) const;
 
-	const char getMark() const {
-		return std::toupper(_name.at(0));
+	char getMark() const {
+		return (char) std::toupper(_name.at(0));
 	}
 
 	const string &getName() const {
