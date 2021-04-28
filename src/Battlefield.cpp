@@ -7,7 +7,6 @@
 
 #include <fstream>
 #include <iostream>
-#include <sstream>
 #include <algorithm>
 #include <tuple>
 #include <chrono>
@@ -22,85 +21,138 @@
  */
 Battlefield::Battlefield(UnitPool &unitPool, const string &filename, int baseHealth) : _unitPool(unitPool) {
 	YAML::Node config = YAML::LoadFile(filename);
-	std::cout << "Loaded yaml : " << config.Type() << std::endl;
-
-	std::ifstream istrm(filename, std::ios::binary);
-	if (!istrm.is_open()) {
-		std::cerr << "Failed to open " << filename << std::endl;
-	} else {                      // TODO unit sprites (and unit animations)
-		int sizeX = 1, sizeY = 1; // TODO read sizeY (upgrade parser to YAML)
-		if (!(istrm >> sizeX)) {
-			std::cerr << "Error reading file : Background files should start by the size of the grid." << std::endl;
-			std::exit(-1);
-		}
-		std::cout << "Size of the grid : " << sizeX << ", " << sizeY << std::endl;
-		_cellsGrid = std::make_pair(sizeX, sizeY);
-		istrm.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
-
-		string line;
-		std::getline(istrm, line);
-		std::istringstream iss(line);
-		std::cout << "Pos line : " << line << std::endl;
-		int x, y;
-		bool posOver = false;
-		while (!posOver && iss >> x >> y) {
-			std::cout << "New position : x=" << x << " y=" << y << std::endl;
-			_bases.emplace_back(baseHealth, Position(x, y));
-			char comma = '\0'; // TODO all the positions should be different
-			iss >> comma; // trying to read a comma
-			posOver = comma == '\0'; // if nothing is read we reached the end of the line
-			if (comma != ',' && !posOver) {
-				std::cerr << "Error reading file : Positions should be separated by a comma ( , )." << std::endl;
-				std::exit(-1);
-			}
-		}
-
-		std::cout << "Finished reading " << loadedBases() << " bases Positions." << std::endl;
-		if (loadedBases() > 2) {
-			bool validForm = false;
-			while (!validForm) {
-				std::cout << "The file don't support second dimension for cells but there are more than two bases.\n"
-				             "Please enter horizontal number of cells : ";
-				std::cin >> sizeY;
-				if (!std::cin.fail()) {
-					_cellsGrid.second = sizeY;
-					validForm = true;
-				} else {
-					std::cout << "Invalid input (expect integer). Try again." << std::endl;
-				}
-			}
-		}
-
-		while (!istrm.eof()) {
-			getline(istrm, line);
-			line.push_back('\n');
-			_background.emplace_back(line.begin(), line.end());
-		}
-		_background.at(_background.size() - 1).at(0) = ' '; // removing last LF
-		// fill last line with spaces based on the size of the line before
-		for (int i = 0; i < _background.at(_background.size() - 2).size(); i++) {
-			_background.at(_background.size() - 1).push_back(' ');
-		}
-		_background.at(_background.size() - 1).push_back('\n');
-
-		if (_background.empty()) {
-			std::cerr << "Error reading file : Background files should contain at least a string at line 3."
-			          << std::endl;
-			std::exit(-1);
-		}
-		std::for_each(_bases.begin(), _bases.end(), [&](const Base &base) {
-			Position p = base.getPosition();
-			if (p.x < 0 || p.x > _background[0].size() || p.y < 0 || p.y > _background.size()) {
-				std::cerr << "Position out of terrain : " << p.x << ", " << p.y << std::endl;
-				std::exit(-1);
-			}
-		});
-
-		std::cout << "Read background : length=" << _background[0].size() << " size=" << _background.size()
-		          << std::endl;
-		printBackground(_background);
+	if (!config.IsMap() || !config["grid"] || !config["bases"] || !config["background"]) {
+		std::cerr << "Configuration of file \"" << filename
+		          << "\" is incomplete. Check provided examples for valid yaml structure." << std::endl;
+		std::exit(-1);
 	}
+
+	// loading grid information
+	if (!config["grid"].IsMap() || !config["grid"]["X"] || !config["grid"]["X"].IsScalar()) {
+		std::cerr << R"("grid" map must contain at least an "X" scalar.)" << std::endl;
+		std::exit(-1);
+	}
+	bool setup2D = false;
+	if (config["grid"]["Y"]) {
+		if (!config["grid"]["Y"].IsScalar()) {
+			std::cerr << R"("Y" must be a scalar.)" << std::endl;
+			std::exit(-1);
+		}
+		setup2D = true;
+		_cellsGrid = std::make_pair(config["grid"]["X"].as<int>(), config["grid"]["Y"].as<int>());
+	} else
+		_cellsGrid = std::make_pair(config["grid"]["X"].as<int>(), 1);
+
+	// loading bases information
+	if (!config["bases"].IsSequence()) {
+		std::cerr << R"("bases" sequence must contain a list of positions.)" << std::endl;
+		std::exit(-1);
+	}
+	for (int i = 0; i < config["bases"].size(); i++) {
+		if (!config["bases"][i].IsMap() || !(config["bases"][i]["X"])) {
+			std::cerr << R"(Positions should contain at least an "X" scalar.)" << std::endl;
+			std::exit(-1);
+		}
+		if (!setup2D && !config["bases"][i]["Y"]) {
+			std::cerr << R"("Y" scalar is mandatory if grid is two-dimensional.)" << std::endl;
+			std::exit(-1);
+		}
+		if (setup2D)
+			_bases.emplace_back(baseHealth, Position(config["bases"][i]["X"].as<int>(), 0));
+		else
+			_bases.emplace_back(baseHealth,
+			                    Position(config["bases"][i]["X"].as<int>(), config["bases"][i]["Y"].as<int>()));
+	}
+	// loading background information
+	if (!config["background"].IsScalar()) {
+		std::cerr << R"("background" scalar should contain the terrain as a list of newline ended strings.)"
+		          << std::endl;
+		std::exit(-1);
+	}
+	std::istringstream background(config["background"].as<string>());
+	string line;
+	while (!background.eof()) {
+		getline(background, line);
+		line.push_back('\n');
+		_background.emplace_back(line.begin(), line.end());
+	}
+
+
+	//	std::ifstream istrm(filename, std::ios::binary);
+	//	if (!istrm.is_open()) {
+	//		std::cerr << "Failed to open " << filename << std::endl;
+	//	} else {                      // TODO unit sprites (and unit animations)
+	//		int sizeX = 1, sizeY = 1;
+	//		if (!(istrm >> sizeX)) {
+	//			std::cerr << "Error reading file : Background files should start by the size of the grid." << std::endl;
+	//			std::exit(-1);
+	//		}
+	//		std::cout << "Size of the grid : " << sizeX << ", " << sizeY << std::endl;
+	//		_cellsGrid = std::make_pair(sizeX, sizeY);
+	//		istrm.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+	//
+
+	//		string line;
+	//		std::getline(istrm, line);
+	//		std::istringstream iss(line);
+	//		std::cout << "Pos line : " << line << std::endl;
+	//		int x, y;
+	//		bool posOver = false;
+	//		while (!posOver && iss >> x >> y) {
+	//			std::cout << "New position : x=" << x << " y=" << y << std::endl;
+	//			_bases.emplace_back(baseHealth, Position(x, y));
+	//			char comma = '\0'; // TODO all the positions should be different
+	//			iss >> comma; // trying to read a comma
+	//			posOver = comma == '\0'; // if nothing is read we reached the end of the line
+	//			if (comma != ',' && !posOver) {
+	//				std::cerr << "Error reading file : Positions should be separated by a comma ( , )." << std::endl;
+	//				std::exit(-1);
+	//			}
+	//		}
+	//
+	//		std::cout << "Finished reading " << loadedBases() << " bases Positions." << std::endl;
+	//		if (loadedBases() > 2) {
+	//			bool validForm = false;
+	//			while (!validForm) {
+	//				std::cout << "The file don't support second dimension for cells but there are more than two bases.\n"
+	//				             "Please enter horizontal number of cells : ";
+	//				std::cin >> sizeY;
+	//				if (!std::cin.fail()) {
+	//					_cellsGrid.second = sizeY;
+	//					validForm = true;
+	//				} else {
+	//					std::cout << "Invalid input (expect integer). Try again." << std::endl;
+	//				}
+	//			}
+	//		}
+
+	//		while (!istrm.eof()) {
+	//			getline(istrm, line);
+	//			line.push_back('\n');
+	//			_background.emplace_back(line.begin(), line.end());
+	//		}
+	_background.at(_background.size() - 1).at(0) = ' '; // removing last LF
+	// fill last line with spaces based on the size of the line before
+	for (int i = 0; i < _background.at(_background.size() - 2).size(); i++) {
+		_background.at(_background.size() - 1).push_back(' ');
+	}
+	_background.at(_background.size() - 1).push_back('\n');
+
+	if (_background.empty()) {
+		std::cerr << "Error reading file : Background files should contain at least a string at line 3." << std::endl;
+		std::exit(-1);
+	}
+	std::for_each(_bases.begin(), _bases.end(), [&](const Base &base) {
+		Position p = base.getPosition();
+		if (p.x < 0 || p.x > _background[0].size() || p.y < 0 || p.y > _background.size()) {
+			std::cerr << "Position out of terrain : " << p.x << ", " << p.y << std::endl;
+			std::exit(-1);
+		}
+	});
+
+	std::cout << "Read background : length=" << _background[0].size() << " size=" << _background.size() << std::endl;
+	printBackground(_background);
+	//	}
 }
 
 int Battlefield::_baseIndex = 0;
