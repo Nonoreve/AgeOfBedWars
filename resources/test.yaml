@@ -1,17 +1,17 @@
 %TAG !position! tag
 ---
 grid: # handles the number of virtual squares on the terrain grid
-    X: 5
+    X: 8
 bases: # sequence of positions of all the bases
     - !position
         X: 0
     - !position
-        X: 4
+        X: 7
 # background contains a the ascii drawing of the playfield
 # letters are to help writing the file and are not necessary to the parsing
 background: |1
-  _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
- |     |     |     |     |     |
- |  A  |     |     |     |  B  |
- |_ _ _|_ _ _|_ _ _|_ _ _|_ _ _|
+  _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ |     |     |     |     |     |     |     |     |
+ |  A  |     |     |     |     |     |     |  B  |
+ |_ _ _|_ _ _|_ _ _|_ _ _|_ _ _|_ _ _|_ _ _|_ _ _|
 ...
