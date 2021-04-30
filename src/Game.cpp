@@ -88,15 +88,24 @@ int main(int argc, char *argv[]) {
 	while (i < terrain.loadedBases()) {
 		std::cout << "Enter name for player " << i << " : ";
 		string name;
-		if (std::cin >> name) {
-			std::cout << "Is this player an ai ? (Y|n) : ";
-			char yesNo;
-			std::cin >> yesNo;
-			if (std::toupper(yesNo) == 'Y')
+		if (getline(std::cin, name)) {
+			std::cin.clear();
+//			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // flush stream
+			std::cout << "Is " << name << " an ai ? (Y|n) : ";
+			string yesNo;
+//			std::cin >> yesNo;
+			getline(std::cin, yesNo);
+			std::cin.clear();
+//			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+			if (std::toupper(yesNo[0]) == 'Y') {
 				players.emplace_back(name, initialMoneyAmount, terrain.getBaseInCreatedOrder(name), true);
-			else
+				i++;
+			}
+			else if (std::toupper(yesNo[0]) == 'N') {
 				players.emplace_back(name, initialMoneyAmount, terrain.getBaseInCreatedOrder(name));
-			i++;
+				i++;
+			} else
+				std::cout << R"(Expected answer is "Y" or "n".)" << std::endl;
 		} else {
 			std::cout << "Invalid name. Try again." << std::endl;
 		}
