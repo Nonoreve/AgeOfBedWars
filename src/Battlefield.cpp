@@ -38,7 +38,7 @@ Battlefield::Battlefield(UnitPool &unitPool, const string &filename, int baseHea
 			std::exit(-1);
 		}
 		_cellsGrid = std::make_pair(config["grid"]["X"].as<int>(), config["grid"]["Y"].as<int>());
-		if(_cellsGrid.second == 1) // Y = 1 -> effectively one-dimensional
+		if (_cellsGrid.second == 1) // Y = 1 -> effectively one-dimensional
 			setup2D = true;
 	} else {
 		_cellsGrid = std::make_pair(config["grid"]["X"].as<int>(), 1);
@@ -79,7 +79,14 @@ Battlefield::Battlefield(UnitPool &unitPool, const string &filename, int baseHea
 		_background.emplace_back(line.begin(), line.end());
 	}
 
+
 	// doing some treatment and sanity checks
+
+	if (_cellsGrid.first <= 1 || _cellsGrid.second <= 0) {
+		std::cerr << "Minimal valid grid size is X=2, Y=1. Given grid size is X=" << _cellsGrid.first << ", Y="
+		          << _cellsGrid.second << std::endl;
+	}
+
 	_background.at(_background.size() - 1).at(0) = ' '; // removing last LF
 	// fill last line with spaces based on the size of the line before
 	for (int i = 0; i < _background.at(_background.size() - 2).size(); i++) {
@@ -87,10 +94,6 @@ Battlefield::Battlefield(UnitPool &unitPool, const string &filename, int baseHea
 	}
 	_background.at(_background.size() - 1).push_back('\n');
 
-	if (_background.empty()) {
-		std::cerr << "Error reading file : Background files should contain at least a string at line 3." << std::endl;
-		std::exit(-1);
-	}
 	std::for_each(_bases.begin(), _bases.end(), [&](const Base &base) {
 		Position p = base.getPosition();
 		if (p.x < 0 || p.x > _background[0].size() || p.y < 0 || p.y > _background.size()) {
