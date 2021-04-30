@@ -5,7 +5,6 @@
 #include "units/Infantryman.hpp"
 #include "yaml-cpp/yaml.h"
 
-#include <fstream>
 #include <iostream>
 #include <algorithm>
 #include <tuple>
@@ -38,10 +37,13 @@ Battlefield::Battlefield(UnitPool &unitPool, const string &filename, int baseHea
 			std::cerr << R"("Y" must be a scalar.)" << std::endl;
 			std::exit(-1);
 		}
-		setup2D = true;
 		_cellsGrid = std::make_pair(config["grid"]["X"].as<int>(), config["grid"]["Y"].as<int>());
-	} else
+		if(_cellsGrid.second == 1) // Y = 1 -> effectively one-dimensional
+			setup2D = true;
+	} else {
 		_cellsGrid = std::make_pair(config["grid"]["X"].as<int>(), 1);
+		setup2D = true;
+	}
 
 	// loading bases information
 	if (!config["bases"].IsSequence()) {
@@ -77,60 +79,7 @@ Battlefield::Battlefield(UnitPool &unitPool, const string &filename, int baseHea
 		_background.emplace_back(line.begin(), line.end());
 	}
 
-
-	//	std::ifstream istrm(filename, std::ios::binary);
-	//	if (!istrm.is_open()) {
-	//		std::cerr << "Failed to open " << filename << std::endl;
-	//	} else {                      // TODO unit sprites (and unit animations)
-	//		int sizeX = 1, sizeY = 1;
-	//		if (!(istrm >> sizeX)) {
-	//			std::cerr << "Error reading file : Background files should start by the size of the grid." << std::endl;
-	//			std::exit(-1);
-	//		}
-	//		std::cout << "Size of the grid : " << sizeX << ", " << sizeY << std::endl;
-	//		_cellsGrid = std::make_pair(sizeX, sizeY);
-	//		istrm.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-	//
-
-	//		string line;
-	//		std::getline(istrm, line);
-	//		std::istringstream iss(line);
-	//		std::cout << "Pos line : " << line << std::endl;
-	//		int x, y;
-	//		bool posOver = false;
-	//		while (!posOver && iss >> x >> y) {
-	//			std::cout << "New position : x=" << x << " y=" << y << std::endl;
-	//			_bases.emplace_back(baseHealth, Position(x, y));
-	//			char comma = '\0'; // TODO all the positions should be different
-	//			iss >> comma; // trying to read a comma
-	//			posOver = comma == '\0'; // if nothing is read we reached the end of the line
-	//			if (comma != ',' && !posOver) {
-	//				std::cerr << "Error reading file : Positions should be separated by a comma ( , )." << std::endl;
-	//				std::exit(-1);
-	//			}
-	//		}
-	//
-	//		std::cout << "Finished reading " << loadedBases() << " bases Positions." << std::endl;
-	//		if (loadedBases() > 2) {
-	//			bool validForm = false;
-	//			while (!validForm) {
-	//				std::cout << "The file don't support second dimension for cells but there are more than two bases.\n"
-	//				             "Please enter horizontal number of cells : ";
-	//				std::cin >> sizeY;
-	//				if (!std::cin.fail()) {
-	//					_cellsGrid.second = sizeY;
-	//					validForm = true;
-	//				} else {
-	//					std::cout << "Invalid input (expect integer). Try again." << std::endl;
-	//				}
-	//			}
-	//		}
-
-	//		while (!istrm.eof()) {
-	//			getline(istrm, line);
-	//			line.push_back('\n');
-	//			_background.emplace_back(line.begin(), line.end());
-	//		}
+	// doing some treatment and sanity checks
 	_background.at(_background.size() - 1).at(0) = ' '; // removing last LF
 	// fill last line with spaces based on the size of the line before
 	for (int i = 0; i < _background.at(_background.size() - 2).size(); i++) {
@@ -152,7 +101,6 @@ Battlefield::Battlefield(UnitPool &unitPool, const string &filename, int baseHea
 
 	std::cout << "Read background : length=" << _background[0].size() << " size=" << _background.size() << std::endl;
 	printBackground(_background);
-	//	}
 }
 
 int Battlefield::_baseIndex = 0;

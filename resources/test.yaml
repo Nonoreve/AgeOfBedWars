@@ -2,14 +2,13 @@
 ---
 grid: # handles the number of virtual squares on the terrain grid
     X: 5
-    Y: 1 # presence of Y is optional and determines the need for Y in all  positions in the file (if Y here -> Y everywhere)
 bases: # sequence of positions of all the bases
     - !position
         X: 0
-        Y: 0
     - !position
         X: 4
-        Y: 0
+# background contains a the ascii drawing of the playfield
+# letters are to help writing the file and are not necessary to the parsing
 background: |1
   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
  |     |     |     |     |     |
