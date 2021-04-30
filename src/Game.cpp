@@ -90,18 +90,16 @@ int main(int argc, char *argv[]) {
 		string name;
 		if (getline(std::cin, name)) {
 			std::cin.clear();
-//			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // flush stream
 			std::cout << "Is " << name << " an ai ? (Y|n) : ";
-			string yesNo;
-//			std::cin >> yesNo;
-			getline(std::cin, yesNo);
+			char yesNo;
+			std::cin >> yesNo;
 			std::cin.clear();
-//			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-			if (std::toupper(yesNo[0]) == 'Y') {
+			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+			if (std::toupper(yesNo) == 'Y') {
 				players.emplace_back(name, initialMoneyAmount, terrain.getBaseInCreatedOrder(name), true);
 				i++;
 			}
-			else if (std::toupper(yesNo[0]) == 'N') {
+			else if (std::toupper(yesNo) == 'N') {
 				players.emplace_back(name, initialMoneyAmount, terrain.getBaseInCreatedOrder(name));
 				i++;
 			} else
