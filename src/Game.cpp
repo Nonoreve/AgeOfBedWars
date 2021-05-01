@@ -27,7 +27,7 @@ Base &opponentBase(const std::vector<Player> &players, Iterator currentPlayer, B
 		string curPlName = currentPlayer->getName(); // copy
 		std::transform(curPlName.begin(), curPlName.end(), curPlName.begin(),
 		               [](unsigned char c) { return std::tolower(c); });
-		while (true) {
+		while (true) { // TODO ai
 			std::cout << "Enter the name of your target" << std::endl; // TODO print player names
 			string targetName;
 			std::cin >> targetName;
@@ -39,7 +39,7 @@ Base &opponentBase(const std::vector<Player> &players, Iterator currentPlayer, B
 				string plName = it->getName();
 				std::transform(plName.begin(), plName.end(), plName.begin(),
 				               [](unsigned char c) { return std::tolower(c); });
-				if (plName == targetName && targetName != curPlName)
+				if (plName == targetName && targetName != curPlName) // TODO custom message when target himself
 					targetFound = true;
 				++it;
 			}
