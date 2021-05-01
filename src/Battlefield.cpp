@@ -65,6 +65,8 @@ Battlefield::Battlefield(UnitPool &unitPool, const string &filename, int baseHea
 				} else {
 					std::cout << "Invalid input (expect integer). Try again." << std::endl;
 				}
+				std::cin.clear();
+				std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 			}
 		}
 
