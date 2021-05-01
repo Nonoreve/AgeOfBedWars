@@ -4,13 +4,13 @@ grid:
     X: 5
     Y: 5 # presence of Y is optional and determines the need for Y in all  positions in the file (if Y here -> Y everywhere)
 bases:
-    - A # actual name for this doesn't matter
+    - # postition tag is optional
         X: 0
         Y: 4
-    - B
+    -
         X: 4
         Y: 4
-    - C
+    -
         X: 2
         Y: 0
 background: |1

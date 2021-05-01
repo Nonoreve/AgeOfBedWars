@@ -212,18 +212,18 @@ void Battlefield::drawTerrain() {
 	std::cout << "Current state of terrain : " << std::endl;
 	vector<vector<char>> frame = _background;
 	float charPerCellX = (float) (frame[0].size() - 1) / (float) _cellsGrid.first; // -1 for linefeed
-	float charPerCellY = (float) frame.size() / (float) _cellsGrid.second;
+	float charPerCellY = (float) (frame.size() -1 ) / (float) _cellsGrid.second; // -1 to make it works
 	int offsetX = 3; // TODO offsets
 	int offsetY = 2;
 	// draw bases marks and health
 	for (auto &base : _bases) {
-		editTerrainAt(frame, (int) std::round(charPerCellX * (float) base.getPosition().x) + offsetX,
-		              (int) std::round(charPerCellY * (float) base.getPosition().y) + offsetY, base.getMark());
+		editTerrainAt(frame, (int) std::floor(charPerCellX * (float) base.getPosition().x) + offsetX,
+		              (int) std::floor(charPerCellY * (float) base.getPosition().y) + offsetY, base.getMark());
 		string health = std::to_string(base.getHealth());
 		for (int i = 0; i < health.size(); i++) {
 			int cOffset = offsetX - health.size() / 2 + i;
-			editTerrainAt(frame, (int) std::round(charPerCellX * (float) base.getPosition().x) + cOffset,
-			              (int) std::round(charPerCellY * (float) base.getPosition().y) + offsetY + 2, health.at(i));
+			editTerrainAt(frame, (int) std::floor(charPerCellX * (float) base.getPosition().x) + cOffset,
+			              (int) std::floor(charPerCellY * (float) base.getPosition().y) + offsetY + 2, health.at(i));
 		}
 	}
 	// draw units
@@ -231,16 +231,16 @@ void Battlefield::drawTerrain() {
 		string label = _unitPool.getUnit(pos)->getLabel();
 		for (int i = 0; i < label.size(); i++) {
 			int cOffset = offsetX - label.size() / 2 + i;
-			editTerrainAt(frame, (int) std::round(charPerCellX * (float) pos.x) + cOffset,
-			              (int) std::round(charPerCellY * (float) pos.y) + offsetY, label.at(i));
+			editTerrainAt(frame, (int) std::floor(charPerCellX * (float) pos.x) + cOffset,
+			              (int) std::floor(charPerCellY * (float) pos.y) + offsetY, label.at(i));
 		}
 		//		editTerrainAt(frame, (int) std::round(charPerCellX * (float) pos.x) + offsetX,
 		//		              (int) std::round(charPerCellY * (float) pos.y) + offsetY, _unitPool.getUnit(pos)->getMark());
 		string health = std::to_string(_unitPool.getUnit(pos)->getHealth());
 		for (int i = 0; i < health.size(); i++) {
 			int cOffset = offsetX - health.size() / 2 + i;
-			editTerrainAt(frame, (int) std::round(charPerCellX * (float) pos.x) + cOffset,
-			              (int) std::round(charPerCellY * (float) pos.y) + offsetY + 1, health.at(i));
+			editTerrainAt(frame, (int) std::floor(charPerCellX * (float) pos.x) + cOffset,
+			              (int) std::floor(charPerCellY * (float) pos.y) + offsetY + 1, health.at(i));
 		}
 	}
 	printBackground(frame);
