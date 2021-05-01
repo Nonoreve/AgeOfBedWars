@@ -28,7 +28,7 @@ Base &opponentBase(const std::vector<Player> &players, Iterator currentPlayer, B
 		std::transform(curPlName.begin(), curPlName.end(), curPlName.begin(),
 		               [](unsigned char c) { return std::tolower(c); });
 		while (true) {
-			std::cout << "Enter the name of your target" << std::endl;
+			std::cout << "Enter the name of your target" << std::endl; // TODO print player names
 			string targetName;
 			std::cin >> targetName;
 			std::transform(targetName.begin(), targetName.end(), targetName.begin(),
@@ -37,14 +37,14 @@ Base &opponentBase(const std::vector<Player> &players, Iterator currentPlayer, B
 			auto it = players.begin();
 			while (!targetFound && it != players.end()) {
 				string plName = it->getName();
-				std::transform(targetName.begin(), targetName.end(), targetName.begin(),
+				std::transform(plName.begin(), plName.end(), plName.begin(),
 				               [](unsigned char c) { return std::tolower(c); });
 				if (plName == targetName && targetName != curPlName)
 					targetFound = true;
 				++it;
 			}
 			if (targetFound) {
-				return terrain.getBase(std::distance(players.begin(), it));
+				return terrain.getBase((int) std::distance(players.begin(), it - 1));
 			} else std::cout << "This is not the name of any player. Try again." << std::endl;
 		}
 	}
@@ -98,8 +98,7 @@ int main(int argc, char *argv[]) {
 			if (std::toupper(yesNo) == 'Y') {
 				players.emplace_back(name, initialMoneyAmount, terrain.getBaseInCreatedOrder(name), true);
 				i++;
-			}
-			else if (std::toupper(yesNo) == 'N') {
+			} else if (std::toupper(yesNo) == 'N') {
 				players.emplace_back(name, initialMoneyAmount, terrain.getBaseInCreatedOrder(name));
 				i++;
 			} else
