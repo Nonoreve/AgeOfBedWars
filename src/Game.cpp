@@ -14,7 +14,7 @@
 #include <thread>
 #include <random>
 
-#define ARGUMENTS 3
+#define ARGUMENTS 4
 #define OPTIONALARGUMENTS 1
 
 template<class Iterator>
@@ -63,7 +63,7 @@ auto prices() {
 int main(int argc, char *argv[]) {
 	if (argc < ARGUMENTS + 1 || argc > ARGUMENTS + 1 + OPTIONALARGUMENTS) {
 		std::cerr << "Invalid number of arguments. Expected " << ARGUMENTS << " got " << argc - 1 << "." << std::endl;
-		std::cerr << "Usage : `AgeOfBedWars <backgroundFile> <baseHealth> <moneyPerTurn> [initialMoneyAmount]`"
+		std::cerr << "Usage : `AgeOfBedWars <backgroundFile> <baseHealth> <moneyPerTurn> <roundsBeforeGameOver> [initialMoneyAmount]`"
 		          << std::endl;
 		std::cerr << "\t<arguments> are required. [arguments] are optionnal." << std::endl;
 		return -1;
@@ -71,10 +71,11 @@ int main(int argc, char *argv[]) {
 	const string backgroundFilename(argv[1]);
 	const int baseHealth = std::stoi(argv[2]);
 	const int moneyPerTurn = std::stoi(argv[3]);
+	const int roundsBeforeGameOver = std::stoi(argv[4]);
 
 	int initialMoneyAmount = 0;
 	if (argc > ARGUMENTS + 1) {
-		initialMoneyAmount = std::stoi(argv[4]);
+		initialMoneyAmount = std::stoi(argv[5]);
 	}
 	std::random_device rdev;
 	std::srand(rdev());
@@ -111,7 +112,7 @@ int main(int argc, char *argv[]) {
 	std::cout << std::endl << " - - - - - Age of Bed Wars - - - - -\n" << std::endl;
 	int round = 0;
 	int loser = -1;
-	while (loser == -1 && round < 100) { // TODO rounds as argument and progressive bar
+	while (loser == -1 && round < roundsBeforeGameOver) { // TODO progress bar for remaining rounds
 		std::cout << std::endl << std::endl << "Round number " << round << std::endl;
 		// distributes money for all the players
 		std::for_each(players.begin(), players.end(), [&](Player &p) { p.pay(moneyPerTurn); });
