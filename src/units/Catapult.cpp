@@ -27,22 +27,6 @@ ActionType Catapult::getAction(int actionPhase) {
 	}
 }
 
-Position next(Position origin, Position target) { // TODO move to Postition.h
-	int longest, shortest, dx1, dy1, dx2, dy2;
-	std::tie(longest, shortest, dx1, dy1, dx2, dy2) = Position::prepareBresenhamValues(origin, target);
-	int numerator = longest * 2;
-	Position result = origin;
-	numerator += shortest;
-	if (numerator >= longest) {
-		result.x += dx1;
-		result.y += dy1;
-	} else {
-		result.x += dx2;
-		result.y += dy2;
-	}
-	return result;
-}
-
 std::pair<vector<Position>, int> Catapult::attack(vector<Position> ennemies) {
 	vector<Position> v;
 	auto it = ennemies.begin();
@@ -54,12 +38,12 @@ std::pair<vector<Position>, int> Catapult::attack(vector<Position> ennemies) {
 	if (it != ennemies.end()) {
 		if (it->distance(_position) <= 3) {
 			v.push_back(*it);
-			v.push_back(next(*it, _target.getPosition()));
+			v.push_back(Position::next(*it, _target.getPosition()));
 			_sucessfullPhases[0] = true;
 		} else if (it->distance(_position) <= 4) {
 			v.push_back(*it);
 			// we give it our own base position to get the previous case
-			v.push_back(next(*it, _owner.getBase().getPosition()));
+			v.push_back(Position::next(*it, _owner.getBase().getPosition()));
 			_sucessfullPhases[0] = true;
 		}
 	}

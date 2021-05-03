@@ -62,6 +62,22 @@ struct Position {
 		return std::make_tuple(longest, shortest, dx1, dy1, dx2, dy2);
 	}
 
+	static Position next(Position origin, Position target) {
+		int longest, shortest, dx1, dy1, dx2, dy2;
+		std::tie(longest, shortest, dx1, dy1, dx2, dy2) = Position::prepareBresenhamValues(origin, target);
+		int numerator = longest * 2;
+		Position result = origin;
+		numerator += shortest;
+		if (numerator >= longest) {
+			result.x += dx1;
+			result.y += dy1;
+		} else {
+			result.x += dx2;
+			result.y += dy2;
+		}
+		return result;
+	}
+
 	bool operator==(const Position &rhs) const {
 		return x == rhs.x && y == rhs.y;
 	}
