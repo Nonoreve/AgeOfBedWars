@@ -30,7 +30,7 @@ public:
 
 	/**
 	 * @param ennemies The positions of the ennemies that are on the same line as this unit.
-	 * (Ennemies that targets the Base of the owner of this Unit)
+	 * (Ennemies that targets the Base of the owner of this Unit) The vector is expected to be sorted by distance to target.
 	 * @return All teh cell positions that the unit strikes
 	 */
 	virtual std::pair<vector<Position>, int> attack(vector<Position> ennemies) = 0;

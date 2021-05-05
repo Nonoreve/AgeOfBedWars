@@ -36,15 +36,19 @@ std::pair<vector<Position>, int> Catapult::attack(vector<Position> ennemies) {
 	}
 	_sucessfullPhases[0] = false;
 	if (it != ennemies.end()) {
-		if (it->distance(_position) <= 3) {
+		if (it->distance(_position) <= 4) {
 			v.push_back(*it);
-			v.push_back(Position::next(*it, _target.getPosition()));
 			_sucessfullPhases[0] = true;
-		} else if (it->distance(_position) <= 4) {
-			v.push_back(*it);
-			// we give it our own base position to get the previous case
-			v.push_back(Position::next(*it, _owner.getBase().getPosition()));
-			_sucessfullPhases[0] = true;
+			if (it->distance(_position) <= 3) {
+				Position collateral = Position::next(*it, _target.getPosition());
+				if (collateral != *it)
+					v.push_back(collateral);
+			} else {
+				// we give it our own base position to get the cell before
+				Position collateral = Position::next(*it, _owner.getBase().getPosition());
+				if (collateral != *it)
+					v.push_back(collateral);
+			}
 		}
 	}
 	return std::make_pair(v, _strikePower);

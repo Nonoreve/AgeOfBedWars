@@ -183,7 +183,6 @@ void Battlefield::doActionPhase(int actionPhase, Unit *unit) {
 				}
 				++it;
 			}
-			// TODO do not attack base and unit at the same time
 			buryCorpses(); // done after base damages to avoid hitting unit and base at the same time
 		}
 			break;
