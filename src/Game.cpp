@@ -94,26 +94,31 @@ int main(int argc, char *argv[]) {
 	int i = 0;
 	while (i < terrain.loadedBases()) {
 		std::cout << "Enter name for player " << i << " : ";
-		bool validName = false;
+		bool validForm = false;
 		string name;
-		while (!validName) {
+		while (!validForm) {
 			getline(std::cin, name);
 			std::cin.clear();
-			validName = (!name.empty() && name != "\n");
+			validForm = (!name.empty() && name != "\n");
 		}
 		std::cout << "Is " << name << " an ai ? (Y|n) : ";
+		validForm = false;
 		char yesNo;
-		std::cin >> yesNo;
-		std::cin.clear();
-		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-		if (std::toupper(yesNo) == 'Y') {
-			players.emplace_back(name, initialMoneyAmount, terrain.getBaseInCreatedOrder(name), true);
-			i++;
-		} else if (std::toupper(yesNo) == 'N') {
-			players.emplace_back(name, initialMoneyAmount, terrain.getBaseInCreatedOrder(name));
-			i++;
-		} else
-			std::cout << R"(Expected answer is "Y" or "n".)" << std::endl;
+		while(!validForm) {
+			std::cin >> yesNo;
+			std::cin.clear();
+			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+			if (std::toupper(yesNo) == 'Y') {
+				players.emplace_back(name, initialMoneyAmount, terrain.getBaseInCreatedOrder(name), true);
+				i++;
+				validForm = true;
+			} else if (std::toupper(yesNo) == 'N') {
+				players.emplace_back(name, initialMoneyAmount, terrain.getBaseInCreatedOrder(name));
+				i++;
+				validForm = true;
+			} else
+				std::cout << R"(Expected answer is "Y" or "n".)" << std::endl;
+		}
 	}
 
 	std::cout << std::endl << " - - - - - Age of Bed Wars - - - - -\n" << std::endl;
