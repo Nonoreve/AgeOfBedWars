@@ -178,7 +178,7 @@ void Battlefield::doActionPhase(int actionPhase, Unit *unit) {
 					baseFound = true;
 					if (unit->targetReached() && _unitPool.isCellFree(it->getPosition())) {
 						it->takeDamage(result.second);
-						_unitPool.remove(unit->getPosition());
+//						_unitPool.remove(unit->getPosition()); // gives a more "tower defense" style : ennemies disepears when they reach the target base
 					}
 				}
 				++it;
