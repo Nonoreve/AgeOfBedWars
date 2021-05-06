@@ -33,22 +33,27 @@ Base &opponentBase(const std::vector<Player> &players, Iterator currentPlayer, B
 			std::cin >> targetName;
 			std::transform(targetName.begin(), targetName.end(), targetName.begin(),
 			               [](unsigned char c) { return std::tolower(c); });
+			if (targetName == curPlName) {
+				std::cout << "You cannot target yourself." << std::endl;
+				continue;
+			}
 			bool targetFound = false;
 			auto it = players.begin();
 			while (!targetFound && it != players.end()) {
 				string plName = it->getName();
 				std::transform(plName.begin(), plName.end(), plName.begin(),
 				               [](unsigned char c) { return std::tolower(c); });
-				if (plName == targetName && targetName != curPlName) // TODO custom message when target himself
+				if (plName == targetName)
 					targetFound = true;
 				++it;
 			}
 			if (targetFound) {
 				return terrain.getBase((int) std::distance(players.begin(), it - 1));
-			} else std::cout << "This is not the name of any player. Try again." << std::endl;
+			} else {
+				std::cout << "This is not the name of any player. Try again." << std::endl;
+			}
 		}
 	}
-
 }
 
 auto prices() {
@@ -63,8 +68,9 @@ auto prices() {
 int main(int argc, char *argv[]) {
 	if (argc < ARGUMENTS + 1 || argc > ARGUMENTS + 1 + OPTIONALARGUMENTS) {
 		std::cerr << "Invalid number of arguments. Expected " << ARGUMENTS << " got " << argc - 1 << "." << std::endl;
-		std::cerr << "Usage : `AgeOfBedWars <backgroundFile> <baseHealth> <moneyPerTurn> <roundsBeforeGameOver> [initialMoneyAmount]`"
-		          << std::endl;
+		std::cerr
+				<< "Usage : `AgeOfBedWars <backgroundFile> <baseHealth> <moneyPerTurn> <roundsBeforeGameOver> [initialMoneyAmount]`"
+				<< std::endl;
 		std::cerr << "\t<arguments> are required. [arguments] are optionnal." << std::endl;
 		return -1;
 	}
