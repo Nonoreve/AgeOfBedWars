@@ -94,25 +94,26 @@ int main(int argc, char *argv[]) {
 	int i = 0;
 	while (i < terrain.loadedBases()) {
 		std::cout << "Enter name for player " << i << " : ";
+		bool validName = false;
 		string name;
-		if (getline(std::cin, name)) {
+		while (!validName) {
+			getline(std::cin, name);
 			std::cin.clear();
-			std::cout << "Is " << name << " an ai ? (Y|n) : ";
-			char yesNo;
-			std::cin >> yesNo;
-			std::cin.clear();
-			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-			if (std::toupper(yesNo) == 'Y') {
-				players.emplace_back(name, initialMoneyAmount, terrain.getBaseInCreatedOrder(name), true);
-				i++;
-			} else if (std::toupper(yesNo) == 'N') {
-				players.emplace_back(name, initialMoneyAmount, terrain.getBaseInCreatedOrder(name));
-				i++;
-			} else
-				std::cout << R"(Expected answer is "Y" or "n".)" << std::endl;
-		} else {
-			std::cout << "Invalid name. Try again." << std::endl;
+			validName = (!name.empty() && name != "\n");
 		}
+		std::cout << "Is " << name << " an ai ? (Y|n) : ";
+		char yesNo;
+		std::cin >> yesNo;
+		std::cin.clear();
+		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+		if (std::toupper(yesNo) == 'Y') {
+			players.emplace_back(name, initialMoneyAmount, terrain.getBaseInCreatedOrder(name), true);
+			i++;
+		} else if (std::toupper(yesNo) == 'N') {
+			players.emplace_back(name, initialMoneyAmount, terrain.getBaseInCreatedOrder(name));
+			i++;
+		} else
+			std::cout << R"(Expected answer is "Y" or "n".)" << std::endl;
 	}
 
 	std::cout << std::endl << " - - - - - Age of Bed Wars - - - - -\n" << std::endl;
