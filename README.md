@@ -25,7 +25,7 @@ Besides that I try to use the c++ library and especially the algorithms library 
 ## Repository structure
 * **includes** : *.hpp* files for sources and libraries. Sub-directories have same structure as *src/* except for libraries folders.
 * **libraries** : currently contains libyaml-cpp.a as a static library built for linux.
-* **resources** : YAML files needed to provide game information at startup.
+* **resources** : YAML files needed to provide game information at startup. Included txt files are ascii arts from the game candy box 2 https://github.com/candybox2/candybox2.github.io I took with planning to add great looking backgrounds in config files.
 * **src** : c++ sources with unit-related classes in *unit/* subdirectory.
 
 ## Code structure
@@ -38,3 +38,10 @@ Besides that I try to use the c++ library and especially the algorithms library 
   * **Archer.cpp** : Archer class.
   * **Catapult.cpp** : Infantryman class.
   * **UnitPool.cpp** : Wraps a collection of unique pointers to store units.
+
+## TODOs and current limitations
+Although the game is ment to be configurable with files, the terrain variations are limited by the virtual grid beeing spread on the entire background and units beeing centered in the cells only displaying theirs initials. The grid spread problem can be work around by creating a grid bigger than needed (like a grid of 3 by 10 with bases only in the middle line and not at the edge cells of the grid) this helps not creating too large cells. The second problem, with units, would need a system to load custom sprites for each unit type this is something I want but need further rework of the code before this could be implemented.
+
+One big code modification I would like to make is making a template system to instanciate Units this allows to store informations like unit prices directly in the class and this is a step to the ultimate goal of having unit behavior fully dynamic and defined by config files at execution time. Also this would discard the need for a UnitType enum, redundant with the information provided by the class hierarchy. 
+
+Finally some part of the code have grown steadily, adding one functionality at a time, and could now benefit a good cleanup and rework. I think of the Battlefield playActions/doActionPhase system with its dependent functions.
